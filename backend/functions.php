@@ -101,15 +101,56 @@ function getTotalRecordCount()
 
     return 0;
 }
-// fetch all data to show in bootstrap table
-function fetchPowerData($page = 1, $perPage = 20)
+// fetch all data, search, date filters
+function fetchPowerData($page = 1, $perPage = 20, $fromDate = null, $toDate = null, $search = null)
 {
     $conn = getDatabaseConnection();
     $offset = ($page - 1) * $perPage;
 
-    $query = "SELECT * FROM mw LIMIT ?, ?";
+    $query = "SELECT * FROM mw";
+
+    // Construct WHERE clause for date range and search
+    $whereClause = '';
+    $bindTypes = '';
+    $bindValues = array();
+
+    if (!empty($fromDate)) {
+        $whereClause .= " Time >= ?";
+        $bindTypes .= "s";
+        $bindValues[] = $fromDate;
+    }
+
+    if (!empty($toDate)) {
+        $whereClause .= ($whereClause ? " AND" : "") . " Time <= ?";
+        $bindTypes .= "s";
+        $bindValues[] = $toDate;
+    }
+
+    if (!empty($search)) {
+        $whereClause .= ($whereClause ? " AND" : "") . " Name LIKE ?";
+        $bindTypes .= "s";
+        $bindValues[] = "%{$search}%";
+    }
+
+    if (!empty($whereClause)) {
+        $query .= " WHERE" . $whereClause;
+    }
+
+    $query .= " LIMIT ?, ?";
+    $bindTypes .= "ii";
+    $bindValues[] = $offset;
+    $bindValues[] = $perPage;
+
     $statement = $conn->prepare($query);
-    $statement->bind_param("ii", $offset, $perPage);
+
+    // Bind parameters dynamically based on types
+    $bindParams = array_merge(array($bindTypes), $bindValues);
+    $bind_params = array();
+    for ($i = 0; $i < count($bindParams); $i++) {
+        $bind_params[] = &$bindParams[$i];
+    }
+    call_user_func_array(array($statement, 'bind_param'), $bind_params);
+
     $statement->execute();
 
     $result = $statement->get_result();
@@ -124,6 +165,31 @@ function fetchPowerData($page = 1, $perPage = 20)
 
     return $data;
 }
+
+
+// // fetch all data to show in bootstrap table
+// function fetchPowerData($page = 1, $perPage = 20)
+// {
+//     $conn = getDatabaseConnection();
+//     $offset = ($page - 1) * $perPage;
+
+//     $query = "SELECT * FROM mw LIMIT ?, ?";
+//     $statement = $conn->prepare($query);
+//     $statement->bind_param("ii", $offset, $perPage);
+//     $statement->execute();
+
+//     $result = $statement->get_result();
+
+//     $data = array();
+//     while ($row = $result->fetch_assoc()) {
+//         $data[] = $row;
+//     }
+
+//     $statement->close();
+//     $conn->close();
+
+//     return $data;
+// }
 
 // // FUNCTION WITH SEARCH, DATE FILTER AND PAGINATION TOO
 // function fetchPowerData($page = 1, $perPage = 20, $search = '', $fromDate = '', $toDate = '')

@@ -1708,22 +1708,64 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
                 <!-- End spline chart -->
 
                 <!-- table start -->
-                
+
+
+
+                <?php
+                $fromDate = isset($_GET['from_date']) ? $_GET['from_date'] : null;
+                $toDate = isset($_GET['to_date']) ? $_GET['to_date'] : null;
+                $searchTerm = isset($_GET['search']) ? $_GET['search'] : null;
+
+                $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+                $perPage = 7;
+
+                // Fetch data based on filters
+                $powerData = fetchPowerData($page, $perPage, $fromDate, $toDate, $searchTerm);
+
+                // Count total rows for pagination
+                $conn = getDatabaseConnection();
+
+                // Modify this query to get min and max dates
+                $dateRangeQuery = "SELECT MIN(Time) as minDate, MAX(Time) as maxDate FROM mw";
+                $dateRangeResult = $conn->query($dateRangeQuery);
+                $dateRange = $dateRangeResult->fetch_assoc();
+                $minDate = $dateRange['minDate'];
+                $maxDate = $dateRange['maxDate'];
+
+                $totalRowsQuery = "SELECT COUNT(*) as total FROM mw";
+
+                // Apply filters to total rows query
+                if (!empty($fromDate)) {
+                    $totalRowsQuery .= " WHERE Time >= '{$fromDate}'";
+                }
+
+                if (!empty($toDate)) {
+                    $totalRowsQuery .= ($fromDate ? " AND" : " WHERE") . " Time <= '{$toDate}'";
+                }
+
+                if (!empty($searchTerm)) {
+                    $totalRowsQuery .= ($fromDate || $toDate ? " AND" : " WHERE") . " Name LIKE '%{$searchTerm}%'";
+                }
+
+                $totalRowsResult = $conn->query($totalRowsQuery);
+                $totalRows = $totalRowsResult->fetch_assoc()['total'];
+                $totalPages = ceil($totalRows / $perPage);
+
+                $conn->close();
+                ?>
                 <!-- table filter start -->
                 <!-- Filter and Search forms -->
                 <div class="row mb-3">
                     <div class="col-lg-6">
                         <form class="form-inline">
                             <!-- Filter form for date range -->
-                            <!-- Filter form for date range -->
                             <label class="mr-2">From Date:</label>
-                            <input class="form-control mr-sm-2" type="date" name="from_date" value="<?php echo $_GET['from_date'] ?? ''; ?>" >
+                            <input class="form-control mr-sm-2" type="date" name="from_date" value="<?php echo $_GET['from_date'] ?? $minDate; ?>" min="<?php echo $minDate; ?>" max="<?php echo $maxDate; ?>">
                             <label class="mr-2">To Date:</label>
-                            <input class="form-control mr-sm-2" type="date" name="to_date" value="<?php echo $_GET['to_date'] ?? ''; ?>" >
-                            <button class="btn btn-secondary" type="submit">Apply</button>
-
+                            <input class="form-control mr-sm-2" type="date" name="to_date" value="<?php echo $_GET['to_date'] ?? $maxDate; ?>" min="<?php echo $minDate; ?>" max="<?php echo $maxDate; ?>">
                             <button class="btn btn-secondary" type="submit">Apply</button>
                         </form>
+
                     </div>
                     <div class="col-lg-6">
                         <form class="form-inline float-lg-right">
@@ -1732,32 +1774,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
                         </form>
                     </div>
                 </div>
-
-                <?php
-                $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-                $perPage = 7;
-                $powerData = fetchPowerData($page, $perPage);
-
-
-                // $search = isset($_GET['search']) ? $_GET['search'] : '';
-                // $fromDate = isset($_GET['from_date']) ? $_GET['from_date'] : '';
-                // $toDate = isset($_GET['to_date']) ? $_GET['to_date'] : '';
-                // $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-                // $perPage = 20;
-                // $powerData = fetchPowerData($page, $perPage, $search, $fromDate, $toDate);
-
-
-                
-
-                // Count total rows for pagination
-                $conn = getDatabaseConnection();
-                $totalRowsQuery = "SELECT COUNT(*) as total FROM mw";
-                $totalRowsResult = $conn->query($totalRowsQuery);
-                $totalRows = $totalRowsResult->fetch_assoc()['total'];
-                $totalPages = ceil($totalRows / $perPage);
-
-                $conn->close();
-                ?>
+                <!-- table filter ends -->
                 <!-- table to show records -->
                 <div class="row">
                     <div class="col-lg-12">
