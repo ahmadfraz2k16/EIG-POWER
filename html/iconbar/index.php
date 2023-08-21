@@ -1665,23 +1665,24 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="d-flex no-block align-items-center ">
-                                    <div>
+                                    <!-- <div class="ml-auto">
                                         <i class="fas fa-bolt font-20 " style="color: yellow;"></i>
+                                    </div> -->
+                                    <div>
+                                        <span> <i class="fas fa-bolt font-20 " style="color: yellow;"></i></span>
                                         <p class="font-16 m-b-5 lead"><?php echo $category; ?></p>
-                                    </div>
-                                    <div class="ml-auto">
                                         <h3 class="font-light text-right"><?php echo $totalEnergy; ?></h3>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- <div class="col-3">
                                 <div class="progress">
                                     <div class="progress-bar bg-info" role="progressbar" style="width: <?php echo ($totalEnergy / $maxEnergy) * 100; ?>%; height: 6px;" aria-valuenow="<?php echo $totalEnergy; ?>" aria-valuemin="0" aria-valuemax="<?php echo $maxEnergy; ?>"></div>
                                 </div>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
             <?php
                         $rowCount++;
                     } ?>
