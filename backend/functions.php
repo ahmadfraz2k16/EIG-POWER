@@ -62,7 +62,7 @@ function getPerDayProductionData()
 
     return $data;
 }
-
+// var_dump(getPerDayProductionData());
 // Fetch all records with pagination
 function getAllRecordsWithPagination($offset, $limit)
 {
@@ -102,7 +102,7 @@ function getTotalRecordCount()
     return 0;
 }
 // fetch all data, search, date filters
-function fetchPowerData($page = 1, $perPage = 20, $fromDate = null, $toDate = null, $search = null)
+function fetchPowerData($page = 1, $perPage = null, $fromDate = null, $toDate = null, $search =null)
 {
     $conn = getDatabaseConnection();
     $offset = ($page - 1) * $perPage;
@@ -165,6 +165,81 @@ function fetchPowerData($page = 1, $perPage = 20, $fromDate = null, $toDate = nu
 
     return $data;
 }
+// fetch all data, search, date filters
+function fetchPowerDataDownloadPurpose($page = 1, $fromDate = null, $toDate = null, $search =null)
+{
+    $conn = getDatabaseConnection();
+    $perPage = null;
+    $offset = ($page - 1) * $perPage;
+
+    $query = "SELECT * FROM mw";
+
+    // Construct WHERE clause for date range and search
+    $whereClause = '';
+    $bindTypes = '';
+    $bindValues = array();
+
+    if (!empty($fromDate)) {
+        $whereClause .= " Time >= ?";
+        $bindTypes .= "s";
+        $bindValues[] = $fromDate;
+    }
+
+    if (!empty($toDate)) {
+        $whereClause .= ($whereClause ? " AND" : "") . " Time <= ?";
+        $bindTypes .= "s";
+        $bindValues[] = $toDate;
+    }
+
+    if (!empty($search)) {
+        $whereClause .= ($whereClause ? " AND" : "") . " Name LIKE ?";
+        $bindTypes .= "s";
+        $bindValues[] = "%{$search}%";
+    }
+
+    if (!empty($whereClause)) {
+        $query .= " WHERE" . $whereClause;
+    }
+
+    $query .= " LIMIT ?, ?";
+    $bindTypes .= "ii";
+    $bindValues[] = $offset;
+    $bindValues[] = $perPage;
+
+    $statement = $conn->prepare($query);
+
+    // Bind parameters dynamically based on types
+    $bindParams = array_merge(array($bindTypes), $bindValues);
+    $bind_params = array();
+    for ($i = 0; $i < count($bindParams); $i++) {
+        $bind_params[] = &$bindParams[$i];
+    }
+    call_user_func_array(array($statement, 'bind_param'), $bind_params);
+
+    $statement->execute();
+
+    $result = $statement->get_result();
+
+    $data = array();
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    $statement->close();
+    $conn->close();
+
+    return $data;
+}
+// // function to download data
+// function generateCSVData($powerData)
+// {
+//     $csvData = "Date,Powerplant Name,Category,Generation\n";
+//     foreach ($powerData as $row) {
+//         $csvData .= "{$row['Time']},{$row['Name']},{$row['category']},{$row['Energy_MWh']}\n";
+//     }
+//     return $csvData;
+// }
+
 
 
 // // fetch all data to show in bootstrap table

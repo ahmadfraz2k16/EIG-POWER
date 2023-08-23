@@ -14,7 +14,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicon.png">
-    <title>Nice admin Template - The Ultimate Multipurpose admin template</title>
+    <title>Power Sector</title>
     <!-- Custom CSS -->
     <link href="../../assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
     <link href="../../assets/extra-libs/c3/c3.min.css" rel="stylesheet">
@@ -467,7 +467,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
                                 </li>
                             </ul>
                         </li>
-                        
+
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -788,7 +788,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
             <!-- footer -->
             <!-- ============================================================== -->
             <footer class="footer text-center">
-                All Rights Reserved by Nice admin. Designed and Developed by
+                All Rights Reserved by Power Sector. Designed and Developed by
                 <a href="https://wrappixel.com">WrapPixel</a>.
             </footer>
             <!-- ============================================================== -->
@@ -1298,12 +1298,12 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php'; ?>
                     case 'csv':
                         data = generateCSVData(powerData);
                         break;
-                        case 'txt':
-                            data = generateTXTData(powerData);
-                            break;
-                        case 'excel':
-                            data = generateExcelData(powerData);
-                            break;
+                    case 'txt':
+                        data = generateTXTData(powerData);
+                        break;
+                    case 'excel':
+                        data = generateExcelData(powerData);
+                        break;
                     default:
                         console.error('Unsupported format: ' + format);
                         return;
