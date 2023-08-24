@@ -42,86 +42,11 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
     <!-- ============================================================== -->
     <div class="container-fluid">
         <!-- ============================================================== -->
-        <!-- Row -->
-        <div class="row">
-            <!-- Column -->
-            <div class="col-sm-12 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-row">
-                            <div class="round align-self-center round-info"><i class="display-7  mdi mdi-water"></i></div>
-                            <div class="m-l-10 align-self-center">
-                                <h4 class="m-b-0">Hydro</h4>
-                                <span class="text-muted">Income</span>
-                            </div>
-                            <div class="ml-auto align-self-center">
-                                <h2 class="font-medium m-b-0">MWh 926056</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-            <!-- Column -->
-            <div class="col-sm-12 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-row">
-                            <div class="round align-self-center round-success"><i class="display-7 mdi mdi-tree"></i></div>
-                            <div class="m-l-10 align-self-center">
-                                <h4 class="m-b-0">Renewable</h4>
-                                <span class="text-muted">Users</span>
-                            </div>
-                            <div class="ml-auto align-self-center">
-                                <h2 class="font-medium m-b-0">MWh 288037</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-            <!-- Column -->
-            <div class="col-sm-12 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-row">
-                            <div class="round align-self-center round-danger"><i class="display-7 mdi mdi-radioactive"></i></div>
-                            <div class="m-l-10 align-self-center">
-                                <h4 class="m-b-0">Nuclear</h4>
-                                <span class="text-muted">My birthday</span>
-                            </div>
-                            <div class="ml-auto align-self-center">
-                                <h2 class="font-medium m-b-0">MWh 965200</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-            <!-- Column -->
-            <div class="col-sm-12 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-row">
-                            <div class="round align-self-center round-warning"><i class="display-7 mdi mdi-fire"></i></div>
-                            <div class="m-l-10 align-self-center">
-                                <h4 class="m-b-0">Thermal</h4>
-                                <span class="text-muted">pending</span>
-                            </div>
-                            <div class="ml-auto align-self-center">
-                                <h2 class="font-medium m-b-0">MWh 3826388</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-        </div>
-        <!-- Row -->
+
         <!-- Row -->
         <div class="card-group">
             <!-- Column -->
-            <div class="card">
+            <div class="card mr-3">
                 <div class="card-body text-center">
                     <h4 class="text-center text-info">HYDRO</h4>
                     <h2>966056</h2>
@@ -133,10 +58,10 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
-                            <h4 class="font-medium m-b-0"><span class="text-success">Public</span><br>12465</h4>
+                            <h4 class="font-medium m-b-0"><span class="text-info">Public</span><br>12465</h4>
                         </div>
                         <div class="col-md-6 col-sm-12">
-                            <h4 class="font-medium m-b-0"><span class="text-danger">Private</span><br>145</h4>
+                            <h4 class="font-medium m-b-0"><span class="text-info">Private</span><br>145</h4>
                         </div>
                     </div>
 
@@ -144,7 +69,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
             </div>
             <!-- Column -->
             <!-- Column -->
-            <div class="card">
+            <div class="card mr-3">
                 <div class="card-body text-center">
                     <h4 class="text-center text-success">RENEWABLE</h4>
                     <h2>288037</h2>
@@ -159,7 +84,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
                             <h4 class="font-medium m-b-0"><span class="text-success">Solar</span><br>12465</h4>
                         </div>
                         <div class="col-md-4 col-sm-12">
-                            <h4 class="font-medium m-b-0"><span class="text-danger">Wind</span><br>12465</h4>
+                            <h4 class="font-medium m-b-0"><span class="text-success">Wind</span><br>12465</h4>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <h4 class="font-medium m-b-0"><span class="text-success">Bagasse</span><br>145</h4>
@@ -170,7 +95,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
             </div>
             <!-- Column -->
             <!-- Column -->
-            <div class="card">
+            <div class="card mr-3">
                 <div class="card-body text-center">
                     <h4 class="text-center text-danger">NUCLEAR</h4>
                     <h2>965200</h2>
@@ -181,12 +106,12 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <h4 class="font-medium m-b-0"><span class="text-success">Gencos</span><br>12465</h4>
+                        <div class="col-md-12 col-sm-12">
+                            <h4 class="font-medium m-b-0"><span class="text-danger">Nuclear</span><br>12465</h4>
                         </div>
-                        <div class="col-md-6 col-sm-12">
+                        <!-- <div class="col-md-6 col-sm-12">
                             <h4 class="font-medium m-b-0"><span class="text-danger">IPPs</span><br>145</h4>
-                        </div>
+                        </div> -->
                     </div>
 
                 </div>
@@ -205,10 +130,10 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
-                            <h4 class="font-medium m-b-0"><span class="text-success">Increase</span><br>12465</h4>
+                            <h4 class="font-medium m-b-0"><span class="text-warning">Gencos</span><br>12465</h4>
                         </div>
                         <div class="col-md-6 col-sm-12">
-                            <h4 class="font-medium m-b-0"><span class="text-danger">Decrease</span><br>145</h4>
+                            <h4 class="font-medium m-b-0"><span class="text-warning">IPPs</span><br>145</h4>
                         </div>
                     </div>
 
@@ -216,6 +141,51 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
             </div>
             <!-- Column -->
         </div>
+        <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "power";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+function generateCategoryCard($categoryName, $sqlConditions, $iconClass)
+{
+    global $conn;
+
+    $sql = "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE $sqlConditions";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    $totalEnergy = $row["TotalEnergy"];
+
+    echo '<div class="card mr-3">
+        <div class="card-body text-center">
+            <h4 class="text-center">' . $categoryName . '</h4>
+            <h2>' . $totalEnergy . '</h2>
+            <div class="row p-t-10 p-b-10">
+                <div class="col text-center align-self-center">
+                    <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 ' . $iconClass . '"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>';
+}
+
+echo '<div class="card-group">';
+
+generateCategoryCard("HYDRO", "sub_categories_by_fuel IN ('HYDEL', 'IPPS HYDEL')", "text-info mdi mdi-water");
+generateCategoryCard("RENEWABLE", "sub_categories_by_fuel IN ('SOLAR', 'WIND', 'IPPS BAGASSE BAGASSE')", "text-success mdi mdi-tree");
+generateCategoryCard("NUCLEAR", "sub_categories_by_fuel IN ('NUCLEAR')", "text-danger mdi mdi-radioactive");
+generateCategoryCard("THERMAL", "sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG')", "text-warning mdi mdi-fire");
+
+echo '</div>';
+$conn->close();
+
+        ?>
         <!-- End Row -->
         <!-- ============================================================== -->
         <!-- Sales chart -->
