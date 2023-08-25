@@ -53,7 +53,7 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
                     <div class="row p-t-10 p-b-10">
                         <!-- Column -->
                         <div class="col text-center align-self-center">
-                            <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 text-primary  mdi mdi-water"></i></div>
+                            <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 text-info  mdi mdi-water"></i></div>
                         </div>
                     </div>
                     <div class="row">
@@ -152,75 +152,122 @@ $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-function generateCategoryCard($categoryName, $sqlConditions, $iconClass)
+// change column sizes for subcategories of NUCLEAR AND RENEWABLE major category
+function getColumnClass($categoryName)
+{
+    if ($categoryName == "NUCLEAR") {
+        return "col-md-12 col-sm-12";
+    } elseif ($categoryName == "RENEWABLE") {
+        return "col-md-4 col-sm-12";
+    } else {
+        return "col-md-6 col-sm-12";
+    }
+}
+// generate cards of major category with their respective sub categories
+function generateCategoryCardnew($categoryName, $numSubCategories, $subCategoryQueries, $iconClass, $SubCategoryNames)
 {
     global $conn;
-
-    $sql = "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE $sqlConditions";
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-    $totalEnergy = $row["TotalEnergy"];
-
-    echo '<div class="card mr-3">
+    $totalEnergy = 0;
+    // Mapping of category names to their corresponding classes
+    $categoryClasses = array(
+        "HYDRO" => "text-info",
+        "RENEWABLE" => "text-success",
+        "NUCLEAR" => "text-danger",
+        "THERMAL" => "text-warning"
+    );
+    for ($i = 0; $i < $numSubCategories; $i++) {
+        $sql = $subCategoryQueries[$i];
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        $subCategoryEnergy = $row["TotalEnergy"];
+        $totalEnergy += (int) $subCategoryEnergy;
+        
+    }
+    // if category is thermal, its mean its last card, so don't add margin to the right
+    echo '<div class="card ' . ($categoryName != "THERMAL" ? 'mr-3' : '') . '">
         <div class="card-body text-center">
-            <h4 class="text-center">' . $categoryName . '</h4>
+            <h4 class="text-center ' . $categoryClasses[$categoryName] . '">' . $categoryName . '</h4>
             <h2>' . $totalEnergy . '</h2>
-            <div class="row p-t-10 p-b-10">
-                <div class="col text-center align-self-center">
-                    <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 ' . $iconClass . '"></i></div>
-                </div>
+        <div class="row p-t-10 p-b-10">
+            <div class="col text-center align-self-center">
+                <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 ' . $iconClass . '"></i></div>
             </div>
-        </div>
-    </div>';
+        </div>';
+
+
+            echo '<div class="row">';
+    for ($i = 0; $i < $numSubCategories; $i++) {
+        $sql = $subCategoryQueries[$i];
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        $subCategoryEnergy = (int) $row["TotalEnergy"];
+        // $totalEnergy += $subCategoryEnergy;
+
+        echo '
+                <div class="' . getColumnClass($categoryName) . ' col-sm-12">
+                    <h4 class="font-medium m-b-0"><span class="' . $categoryClasses[$categoryName] . '">' . $SubCategoryNames[$i] . '</span><br>' . $subCategoryEnergy . '</h4>
+                </div>
+            ';
+    }
+
+    echo '
+    </div>
+    </div>
+</div>';
 }
 
 echo '<div class="card-group">';
 
-generateCategoryCard("HYDRO", "sub_categories_by_fuel IN ('HYDEL', 'IPPS HYDEL')", "text-info mdi mdi-water");
-generateCategoryCard("RENEWABLE", "sub_categories_by_fuel IN ('SOLAR', 'WIND', 'IPPS BAGASSE BAGASSE')", "text-success mdi mdi-tree");
-generateCategoryCard("NUCLEAR", "sub_categories_by_fuel IN ('NUCLEAR')", "text-danger mdi mdi-radioactive");
-generateCategoryCard("THERMAL", "sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG')", "text-warning mdi mdi-fire");
+$HydroSubCategoryQueries = array(
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'HYDEL'",
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS HYDEL HYDEL'"
+);
+$HydroSubCategoryNames = array(
+    "Private",
+    "Public"
+);
+generateCategoryCardnew("HYDRO", count($HydroSubCategoryQueries), $HydroSubCategoryQueries, "mdi mdi-water text-info ", $HydroSubCategoryNames);
+
+$RenewableSubCategoryQueries = array(
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'SOLAR'",
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'WIND'",
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS BAGASSE BAGASSE'"
+);
+$RenewableSubCategoryNames = array(
+    "Solar",
+    "Wind",
+    "Bagasse"
+);
+generateCategoryCardnew("RENEWABLE", count($RenewableSubCategoryQueries), $RenewableSubCategoryQueries, "mdi mdi-tree text-success", $RenewableSubCategoryNames);
+
+$NuclearSubCategoryQueries = array(
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'NUCLEAR'"
+);
+$NuclearSubCategoryNames = array(
+    "Nuclear"
+);
+generateCategoryCardnew("NUCLEAR", count($NuclearSubCategoryQueries), $NuclearSubCategoryQueries, "mdi mdi-radioactive text-danger ", $NuclearSubCategoryNames);
+
+$ThermalSubCategoryQueries = array(
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG')",
+    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG')"
+);
+$ThermalSubCategoryNames = array(
+    "Gencos",
+    "IPPS"
+);
+generateCategoryCardnew("THERMAL", count($ThermalSubCategoryQueries), $ThermalSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalSubCategoryNames);
 
 echo '</div>';
+
 $conn->close();
 
         ?>
         <!-- End Row -->
-        <!-- ============================================================== -->
-        <!-- Sales chart -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Email campaign chart -->
-        <!-- ============================================================== -->
+      
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <!-- ============================================================== -->
-        <!-- Email campaign chart -->
-        <!-- ============================================================== -->
-
-        <!-- ============================================================== -->
-        <!-- Recent comment and chats -->
-        <!-- ============================================================== -->
-
-        <!-- ============================================================== -->
-        <!-- Recent comment and chats -->
-        <!-- ============================================================== -->
+        
     </div>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
