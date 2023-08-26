@@ -2,6 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
+$startDate = startDate();
+$endDate = endDate();
 ?>
 <?php include('include/header.php'); ?>
 <!-- ============================================================== -->
@@ -41,60 +43,26 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
     <!-- Container fluid  -->
     <!-- ============================================================== -->
     <div class="container-fluid">
-        <!-- ============================================================== -->   
-        <?php
-echo '<div class="card-group">';
+        <div class="row">
+            <form id="dateRangeForm">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate">
+                <button type="submit">Apply Date Range</button>
+            </form>
+        </div>
 
-$HydroSubCategoryQueries = array(
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'HYDEL'",
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS HYDEL HYDEL'"
-);
-$HydroSubCategoryNames = array(
-    "Private",
-    "Public"
-);
-generateCategoryCardnew("HYDRO", count($HydroSubCategoryQueries), $HydroSubCategoryQueries, "mdi mdi-water text-info ", $HydroSubCategoryNames);
+        <!-- ============================================================== -->
+        <div id="cardsContainer" class="card-group">
+            <!-- Cards will be displayed here -->
+        </div>
 
-$RenewableSubCategoryQueries = array(
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'SOLAR'",
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'WIND'",
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS BAGASSE BAGASSE'"
-);
-$RenewableSubCategoryNames = array(
-    "Solar",
-    "Wind",
-    "Bagasse"
-);
-generateCategoryCardnew("RENEWABLE", count($RenewableSubCategoryQueries), $RenewableSubCategoryQueries, "mdi mdi-tree text-success", $RenewableSubCategoryNames);
-
-$NuclearSubCategoryQueries = array(
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'NUCLEAR'"
-);
-$NuclearSubCategoryNames = array(
-    "Nuclear"
-);
-generateCategoryCardnew("NUCLEAR", count($NuclearSubCategoryQueries), $NuclearSubCategoryQueries, "mdi mdi-radioactive text-danger ", $NuclearSubCategoryNames);
-
-$ThermalSubCategoryQueries = array(
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG')",
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG')"
-);
-$ThermalSubCategoryNames = array(
-    "Gencos",
-    "IPPS"
-);
-generateCategoryCardnew("THERMAL", count($ThermalSubCategoryQueries), $ThermalSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalSubCategoryNames);
-
-echo '</div>';
-
-
-
-        ?>
         <!-- End Row -->
-      
 
 
-        
+
+
     </div>
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
@@ -123,6 +91,37 @@ echo '</div>';
 
 
 <!-- <script src="../../dist/js/pages/c3-chart/line/c3-spline.js"></script> -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const startDateInput = document.getElementById("startDate");
+        const endDateInput = document.getElementById("endDate");
+        const cardsContainer = document.getElementById("cardsContainer");
+
+        startDateInput.value = "<?php echo $startDate; ?>";
+        endDateInput.value = "<?php echo $endDate; ?>";
+
+        const dateRangeForm = document.getElementById("dateRangeForm");
+
+        dateRangeForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            // Make an AJAX request
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `get_filtered_data.php?startDate=${startDate}&endDate=${endDate}`);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Update the cards content with the received HTML response
+                    cardsContainer.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        });
+    });
+</script>
+
 </body>
 
 </html>

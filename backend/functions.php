@@ -293,3 +293,31 @@ function generateCategoryCardnew($categoryName, $numSubCategories, $subCategoryQ
     </div>
 </div>';
 }
+// function for lowest date
+function startDate(){
+    $conn = getDatabaseConnection();
+
+    // Get the lowest date
+    $sqlLowestDate = "SELECT MIN(Time) AS LowestDate FROM mw_new";
+    $resultLowestDate = $conn->query($sqlLowestDate);
+    $rowLowestDate = $resultLowestDate->fetch_assoc();
+    $lowestDate = $rowLowestDate["LowestDate"];
+    
+    $conn->close();
+    return $lowestDate;
+
+}
+// function for highest date
+function endDate(){
+    $conn = getDatabaseConnection();
+
+    // Get the greatest date
+    $sqlGreatestDate = "SELECT MAX(Time) AS GreatestDate FROM mw_new";
+    $resultGreatestDate = $conn->query($sqlGreatestDate);
+    $rowGreatestDate = $resultGreatestDate->fetch_assoc();
+    $greatestDate = $rowGreatestDate["GreatestDate"];
+
+    $conn->close();
+    return $greatestDate;
+
+}
