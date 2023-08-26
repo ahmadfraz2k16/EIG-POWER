@@ -230,164 +230,66 @@ function fetchPowerDataDownloadPurpose($page = 1, $fromDate = null, $toDate = nu
 
     return $data;
 }
-// // function to download data
-// function generateCSVData($powerData)
-// {
-//     $csvData = "Date,Powerplant Name,Category,Generation\n";
-//     foreach ($powerData as $row) {
-//         $csvData .= "{$row['Time']},{$row['Name']},{$row['category']},{$row['Energy_MWh']}\n";
-//     }
-//     return $csvData;
-// }
+//function for generating cards at index.php, major categories and sub categories
+// change column sizes for subcategories of NUCLEAR AND RENEWABLE major category
+function getColumnClass($categoryName)
+{
+    if ($categoryName == "NUCLEAR") {
+        return "col-md-12 col-sm-12";
+    } elseif ($categoryName == "RENEWABLE") {
+        return "col-md-4 col-sm-12";
+    } else {
+        return "col-md-6 col-sm-12";
+    }
+}
+// generate cards of major category with their respective sub categories
+function generateCategoryCardnew($categoryName, $numSubCategories, $subCategoryQueries, $iconClass, $SubCategoryNames)
+{
+    $conn = getDatabaseConnection();
+    $totalEnergy = 0;
+    // Mapping of category names to their corresponding classes
+    $categoryClasses = array(
+        "HYDRO" => "text-info",
+        "RENEWABLE" => "text-success",
+        "NUCLEAR" => "text-danger",
+        "THERMAL" => "text-warning"
+    );
+    for ($i = 0; $i < $numSubCategories; $i++) {
+        $sql = $subCategoryQueries[$i];
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        $subCategoryEnergy = $row["TotalEnergy"];
+        $totalEnergy += (int) $subCategoryEnergy;
+    }
+    // if category is thermal, its mean its last card, so don't add margin to the right
+    echo '<div class="card ' . ($categoryName != "THERMAL" ? 'mr-3' : '') . '">
+        <div class="card-body text-center">
+            <h4 class="text-center ' . $categoryClasses[$categoryName] . '">' . $categoryName . '</h4>
+            <h2>' . $totalEnergy . '</h2>
+        <div class="row p-t-10 p-b-10">
+            <div class="col text-center align-self-center">
+                <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 ' . $iconClass . '"></i></div>
+            </div>
+        </div>';
 
 
+    echo '<div class="row">';
+    for ($i = 0; $i < $numSubCategories; $i++) {
+        $sql = $subCategoryQueries[$i];
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        $subCategoryEnergy = (int) $row["TotalEnergy"];
+        // $totalEnergy += $subCategoryEnergy;
 
-// // fetch all data to show in bootstrap table
-// function fetchPowerData($page = 1, $perPage = 20)
-// {
-//     $conn = getDatabaseConnection();
-//     $offset = ($page - 1) * $perPage;
+        echo '
+                <div class="' . getColumnClass($categoryName) . ' col-sm-12">
+                    <h4 class="font-medium m-b-0"><span class="' . $categoryClasses[$categoryName] . '">' . $SubCategoryNames[$i] . '</span><br>' . $subCategoryEnergy . '</h4>
+                </div>
+            ';
+    }
 
-//     $query = "SELECT * FROM mw LIMIT ?, ?";
-//     $statement = $conn->prepare($query);
-//     $statement->bind_param("ii", $offset, $perPage);
-//     $statement->execute();
-
-//     $result = $statement->get_result();
-
-//     $data = array();
-//     while ($row = $result->fetch_assoc()) {
-//         $data[] = $row;
-//     }
-
-//     $statement->close();
-//     $conn->close();
-
-//     return $data;
-// }
-
-// // FUNCTION WITH SEARCH, DATE FILTER AND PAGINATION TOO
-// function fetchPowerData($page = 1, $perPage = 20, $search = '', $fromDate = '', $toDate = '')
-// {
-//     $conn = getDatabaseConnection();
-//     $offset = ($page - 1) * $perPage;
-
-//     // Prepare the basic query
-//     $query = "SELECT * FROM mw";
-
-//     // Add search criteria if provided
-//     if (!empty($search)) {
-//         $query .= " WHERE Name LIKE ?";
-//     }
-
-//     // Add date range criteria if provided
-//     if (!empty($fromDate) && !empty($toDate)) {
-//         $query .= empty($search) ? " WHERE" : " AND";
-//         $query .= " Time BETWEEN ? AND ?";
-//     }
-
-//     // Add limit and offset for pagination
-//     $query .= " LIMIT ? OFFSET ?";
-
-//     $statement = $conn->prepare($query);
-
-//     // Bind parameters
-//     if (!empty($search)) {
-//         $searchParam = '%' . $search . '%';
-//         $statement->bind_param("ssii", $searchParam, $searchParam, $offset, $perPage);
-//     } else {
-//         $statement->bind_param("ii", $offset, $perPage);
-//     }
-
-//     if (!empty($fromDate) && !empty($toDate)) {
-//         $statement->bind_param("ss", $fromDate, $toDate);
-//     }
-
-//     $statement->execute();
-
-//     $result = $statement->get_result();
-
-//     $data = array();
-//     while ($row = $result->fetch_assoc()) {
-//         $data[] = $row;
-//     }
-
-//     $statement->close();
-//     $conn->close();
-
-//     return $data;
-// }
-
-// function fetchPowerData($limit = 10)
-// {
-//     $conn = getDatabaseConnection();
-
-//     $query = "SELECT * FROM mw LIMIT ?";
-//     $statement = $conn->prepare($query);
-//     $statement->bind_param("i", $limit);
-//     $statement->execute();
-
-//     $result = $statement->get_result();
-
-//     $data = array();
-//     while ($row = $result->fetch_assoc()) {
-//         $data[] = $row;
-//     }
-
-//     $statement->close();
-//     $conn->close();
-
-//     return $data;
-// }
-// var_dump(fetchPowerData(10))
-
-// # daily production version 2
-// // In functions.php
-// function getPerDayProductionData()
-// {
-//     $conn = getDatabaseConnection();
-
-//     $sql = "SELECT category, DATE(Time) AS day, SUM(Energy_MWh) AS total_energy FROM mw GROUP BY category, DATE(Time)";
-//     $result = $conn->query($sql);
-
-//     $data = array();
-
-//     if ($result->num_rows > 0) {
-//         while ($row = $result->fetch_assoc()) {
-//             $category = $row["category"];
-//             $day = $row["day"];
-//             $totalEnergy = $row["total_energy"];
-
-//             if (!isset($data[$category])) {
-//                 $data[$category] = array();
-//             }
-
-//             $data[$category][$day] = $totalEnergy;
-//         }
-//     }
-
-//     $conn->close();
-
-//     return $data;
-// }
-
-// # daily production version 1
-// function getCategoryDailyProductionData2()
-// {
-//     $conn = getDatabaseConnection();
-
-//     $sql = "SELECT Date(Time) AS production_date, category, SUM(Energy_MWh) AS total_energy FROM mw GROUP BY production_date, category";
-//     $result = $conn->query($sql);
-
-//     $data = array();
-
-//     if ($result->num_rows > 0) {
-//         while ($row = $result->fetch_assoc()) {
-//             $data[] = $row;
-//         }
-//     }
-
-//     $conn->close();
-
-//     return $data;
-// }
+    echo '
+    </div>
+    </div>
+</div>';
+}
