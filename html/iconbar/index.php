@@ -50,10 +50,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
                 <label for="endDate">End Date:</label>
                 <input type="date" id="endDate" name="endDate" min="<?php echo $startDate; ?>" max="<?php echo $endDate; ?>">
 
-                <!-- <label for="startDate">Start Date:</label>
-                <input type="date" id="startDate" name="startDate">
-                <label for="endDate">End Date:</label>
-                <input type="date" id="endDate" name="endDate"> -->
+
                 <button type="submit">Apply Date Range</button>
             </form>
         </div>
@@ -102,7 +99,6 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         const endDateInput = document.getElementById("endDate");
         const cardsContainer = document.getElementById("cardsContainer");
 
-        
         startDateInput.value = "<?php echo $startDate; ?>";
         endDateInput.value = "<?php echo $endDate; ?>";
 
@@ -118,6 +114,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
+
             // Validate and adjust the selected date range within bounds
             if (startDate < "<?php echo $startDate; ?>") {
                 startDateInput.value = "<?php echo $startDate; ?>";
@@ -137,8 +134,25 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             };
             xhr.send();
         });
+
+        // Make an initial AJAX request to load default cards
+        updateCardsWithDateRange(startDateInput.value, endDateInput.value);
+
+        function updateCardsWithDateRange(startDate, endDate) {
+            // Make an AJAX request
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `get_filtered_data.php?startDate=${startDate}&endDate=${endDate}`);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Update the cards content with the received HTML response
+                    cardsContainer.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
     });
 </script>
+
 
 </body>
 
