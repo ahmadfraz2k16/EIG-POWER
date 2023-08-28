@@ -59,7 +59,8 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <div id="cardsContainer" class="card-group">
             <!-- Cards will be displayed here -->
         </div>
-
+        <!-- high chart should be displayed here -->
+        <div id="container" style="width:100%; height:400px;"></div>
         <!-- End Row -->
 
 
@@ -91,7 +92,52 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 
 
-
+<script>
+    // // Data retrieved from: https://www.uefa.com/uefachampionsleague/history/
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Energy Distribution By Major Categories'
+        },
+        xAxis: {
+            categories: ['2021/22', '2020/21', '2019/20', '2018/19', '2017/18']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Assists'
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+            shared: true
+        },
+        plotOptions: {
+            column: {
+                stacking: 'percent'
+            }
+        },
+        series: [{
+            name: 'HYDRO',
+            data: [4, 4, 2, 4, 4],
+            color: '#7bc4df'
+        }, {
+            name: 'RENEWABLE',
+            data: [1, 4, 3, 2, 3],
+            color: '#bcff4f'
+        }, {
+            name: 'NUCLEAR',
+            data: [1, 2, 2, 1, 2],
+            color: '#f6764d'
+        }, {
+            name: 'THERMAL',
+            data: [1, 2, 2, 1, 2],
+            color: '#ffd433'
+        }]
+    });
+</script>
 <!-- <script src="../../dist/js/pages/c3-chart/line/c3-spline.js"></script> -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
