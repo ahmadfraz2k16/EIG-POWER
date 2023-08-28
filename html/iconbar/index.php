@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
-$startDate = startDate();
-$endDate = endDate();
+$startDate = date_format(date_create(startDate()), "Y-m-d");
+$endDate = date_format(date_create(endDate()), "Y-m-d");
 ?>
 <?php include('include/header.php'); ?>
 <!-- ============================================================== -->
@@ -46,9 +46,14 @@ $endDate = endDate();
         <div class="row">
             <form id="dateRangeForm">
                 <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" min="<?php echo $startDate; ?>" max="<?php echo $endDate; ?>">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" min="<?php echo $startDate; ?>" max="<?php echo $endDate; ?>">
+
+                <!-- <label for="startDate">Start Date:</label>
                 <input type="date" id="startDate" name="startDate">
                 <label for="endDate">End Date:</label>
-                <input type="date" id="endDate" name="endDate">
+                <input type="date" id="endDate" name="endDate"> -->
                 <button type="submit">Apply Date Range</button>
             </form>
         </div>
@@ -97,8 +102,14 @@ $endDate = endDate();
         const endDateInput = document.getElementById("endDate");
         const cardsContainer = document.getElementById("cardsContainer");
 
+        
         startDateInput.value = "<?php echo $startDate; ?>";
         endDateInput.value = "<?php echo $endDate; ?>";
+
+        startDateInput.min = "<?php echo $startDate; ?>";
+        startDateInput.max = "<?php echo $endDate; ?>";
+        endDateInput.min = "<?php echo $startDate; ?>";
+        endDateInput.max = "<?php echo $endDate; ?>";
 
         const dateRangeForm = document.getElementById("dateRangeForm");
 
@@ -107,6 +118,13 @@ $endDate = endDate();
 
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
+            // Validate and adjust the selected date range within bounds
+            if (startDate < "<?php echo $startDate; ?>") {
+                startDateInput.value = "<?php echo $startDate; ?>";
+            }
+            if (endDate > "<?php echo $endDate; ?>") {
+                endDateInput.value = "<?php echo $endDate; ?>";
+            }
 
             // Make an AJAX request
             const xhr = new XMLHttpRequest();
