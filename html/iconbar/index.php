@@ -62,6 +62,11 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <!-- high chart should be displayed here -->
         <div id="container" style="width:100%; height:400px;"></div>
         <!-- End Row -->
+        <!-- high chart should be displayed here -->
+        <div id="container_version_2" style="width:100%; height:400px;">
+
+        </div>
+        <!-- End Row -->
 
 
 
@@ -90,10 +95,78 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 <?php include('include/footer.php'); ?>
 
 
+<!-- stacked column bar chart container_version_2 -->
+<script>
+    <?php
+    // Fetch data from your database and prepare it for use
+    $connection = new mysqli("localhost", "root", "", "power");
+    $query = "SELECT * FROM mw_new";
+    $result = $connection->query($query);
+
+    $chartData = array();
+
+    while ($row = $result->fetch_assoc()) {
+        $subCategory = $row['sub_categories_by_fuel'];
+        $time = $row['Time'];
+        $energy = floatval($row['Energy_MWh']);
+
+        if (!isset($chartData[$subCategory])) {
+            $chartData[$subCategory] = array();
+        }
+
+        if (!isset($chartData[$subCategory][$time])) {
+            $chartData[$subCategory][$time] = 0;
+        }
+
+        $chartData[$subCategory][$time] += $energy;
+    }
+
+    // Convert $chartData to a JSON format for use in JavaScript
+    $chartJSData = json_encode($chartData);
+    ?>
+
+    var chartData = <?php echo $chartJSData; ?>;
+    var categories = Object.keys(chartData);
+    var seriesData = [];
+
+    for (var i = 0; i < categories.length; i++) {
+        var category = categories[i];
+        var categoryData = Object.values(chartData[category]);
+
+        seriesData.push({
+            name: category,
+            data: categoryData
+        });
+    }
+
+    Highcharts.chart('container_version_2', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Energy Distribution By Major Categories'
+        },
+        xAxis: {
+            categories: Object.keys(chartData[categories[0]])
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Energy (MWh)'
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+            shared: true
+        },
+        series: seriesData
+    });
+</script>
+
+
 
 
 <script>
-    // // Data retrieved from: https://www.uefa.com/uefachampionsleague/history/
     Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -138,6 +211,51 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         }]
     });
 </script>
+<!-- <script>
+    Highcharts.chart('container_version_2', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Energy Distribution By Major Categories container_version_2'
+        },
+        xAxis: {
+            categories: ['2021/22', '2020/21', '2019/20', '2018/19', '2017/18']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Assists'
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+            shared: true
+        },
+        plotOptions: {
+            column: {
+                stacking: 'percent'
+            }
+        },
+        series: [{
+            name: 'HYDRO',
+            data: [4, 4, 2, 4, 4],
+            color: '#7bc4df'
+        }, {
+            name: 'RENEWABLE',
+            data: [1, 4, 3, 2, 3],
+            color: '#bcff4f'
+        }, {
+            name: 'NUCLEAR',
+            data: [1, 2, 2, 1, 2],
+            color: '#f6764d'
+        }, {
+            name: 'THERMAL',
+            data: [1, 2, 2, 1, 2],
+            color: '#ffd433'
+        }]
+    });
+</script> -->
 <!-- <script src="../../dist/js/pages/c3-chart/line/c3-spline.js"></script> -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
