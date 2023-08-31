@@ -60,12 +60,10 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             <!-- Cards will be displayed here -->
         </div>
         <!-- high chart should be displayed here -->
-        <div id="container" style="width:100%; height:400px;"></div>
+        <div id="container6" style="width:100%; height:400px;"></div>
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <div id="container_version_2" style="width:100%; height:400px;">
-
-        </div>
+        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
 
 
@@ -100,10 +98,15 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
     <?php
     // Fetch data from your database and prepare it for use
     $connection = new mysqli("localhost", "root", "", "power");
-    $query = "SELECT * FROM mw_new";
+    $startDate = "2022-03-02";
+    $endDate = "2022-03-21";
+    $query = "SELECT * FROM mw_new WHERE Time BETWEEN '$startDate' AND '$endDate'";
+
     $result = $connection->query($query);
 
     $chartData = array();
+
+
 
     while ($row = $result->fetch_assoc()) {
         $subCategory = $row['sub_categories_by_fuel'];
@@ -123,6 +126,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
     // Convert $chartData to a JSON format for use in JavaScript
     $chartJSData = json_encode($chartData);
+    // var_dump($chartJSData);
     ?>
 
     var chartData = <?php echo $chartJSData; ?>;
@@ -166,51 +170,240 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 
 
+
 <script>
-    Highcharts.chart('container', {
+    Highcharts.chart('container6', {
         chart: {
             type: 'column'
         },
         title: {
-            text: 'Energy Distribution By Major Categories'
+            text: 'Energy Distribution By Major Categories',
+            align: 'left'
         },
         xAxis: {
-            categories: ['2021/22', '2020/21', '2019/20', '2018/19', '2017/18']
+            categories: ['2022-03-02', '2022-03-03', '2022-03-04', '2022-03-05']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Assists'
+                text: 'GENERATION MWh'
+            },
+            stackLabels: {
+                enabled: true
             }
         },
+        legend: {
+            align: 'left',
+            x: 70,
+            verticalAlign: 'top',
+            y: 70,
+            floating: true,
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
         tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-            shared: true
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}<br/>Sub categories:<br/>{point.subCategories}'
         },
         plotOptions: {
             column: {
-                stacking: 'percent'
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], //custom color hash for main categories
+        series: [{
+            name: 'HYDRO',
+            data: [{
+                y: 3,
+                color: '#91C8E4', //custom color hash for sub category
+                subCategories: 'Private (1.5), Public (1.5)' //dummy values for sub category
+            }, {
+                y: 5,
+                color: '#91C8E4',
+                subCategories: 'Private (2.5), Public (2.5)'
+            }, {
+                y: 3,
+                color: '#91C8E4',
+                subCategories: 'Private (1.5), Public (1.5)'
+            }, {
+                y: 13,
+                color: '#91C8E4',
+                subCategories: 'Private (6.5), Public (6.5)'
+            }]
+        }, {
+            name: 'RENEWABLE',
+            data: [{
+                y: 14,
+                color: '#A8DF8E',
+                subCategories: 'Solar (4.7), Wind (4.7), Bagasse (4.6)'
+            }, {
+                y: 8,
+                color: '#A8DF8E',
+                subCategories: 'Solar (2.7), Wind (2.7), Bagasse (2.6)'
+            }, {
+                y: 8,
+                color: '#A8DF8E',
+                subCategories: 'Solar (2.7), Wind (2.7), Bagasse (2.6)'
+            }, {
+                y: 12,
+                color: '#A8DF8E',
+                subCategories: 'Solar (4), Wind (4), Bagasse (4)'
+            }]
+        }, {
+            name: 'NUCLEAR',
+            data: [{
+                y: 14,
+                color: '#FF6969',
+                subCategories: 'Nuclear (14)'
+            }, {
+                y: 8,
+                color: '#FF6969',
+                subCategories: 'Nuclear (8)'
+            }, {
+                y: 8,
+                color: '#FF6969',
+                subCategories: 'Nuclear (8)'
+            }, {
+                y: 12,
+                color: '#FF6969',
+                subCategories: 'Nuclear (12)'
+            }]
+        }, {
+            name: 'THERMAL',
+            data: [{
+                y: 4,
+                color: '#F0B86E',
+                subCategories: 'Gencos (2), IPPS (2)'
+            }, {
+                y: 2,
+                color: '#F0B86E',
+                subCategories: 'Gencos (1), IPPS (1)'
+            }, {
+                y: 6,
+                color: '#F0B86E',
+                subCategories: 'Gencos (3), IPPS (3)'
+            }, {
+                y: 3,
+                color: '#F0B86E',
+                subCategories: 'Gencos (1.5), IPPS (1.5)'
+            }]
+        }]
+    });
+</script>
+<!-- <script>
+    Highcharts.chart('container6', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Energy Distribution By Major Categories',
+            align: 'left'
+        },
+        xAxis: {
+            categories: ['2022-03-02', '2022-03-03', '2022-03-04', '2022-03-05']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'GENERATION MWh'
+            },
+            stackLabels: {
+                enabled: true
+            }
+        },
+        legend: {
+            align: 'left',
+            x: 70,
+            verticalAlign: 'top',
+            y: 70,
+            floating: true,
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+        tooltip: {
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}<br/>Sub categories:<br/>{point.subCategories}'
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
             }
         },
         series: [{
             name: 'HYDRO',
-            data: [4, 4, 2, 4, 4],
-            color: '#7bc4df'
+            data: [{
+                y: 3,
+                subCategories: 'Private, Public'
+            }, {
+                y: 5,
+                subCategories: 'Private, Public'
+            }, {
+                y: 3,
+                subCategories: 'Private, Public'
+            }, {
+                y: 13,
+                subCategories: 'Private, Public'
+            }]
         }, {
             name: 'RENEWABLE',
-            data: [1, 4, 3, 2, 3],
-            color: '#bcff4f'
+            data: [{
+                y: 14,
+                subCategories: 'Solar, Wind, Bagasse'
+            }, {
+                y: 8,
+                subCategories: 'Solar, Wind, Bagasse'
+            }, {
+                y: 8,
+                subCategories: 'Solar, Wind, Bagasse'
+            }, {
+                y: 12,
+                subCategories: 'Solar, Wind, Bagasse'
+            }]
         }, {
             name: 'NUCLEAR',
-            data: [1, 2, 2, 1, 2],
-            color: '#f6764d'
+            data: [{
+                y: 14,
+                subCategories: 'Nuclear'
+            }, {
+                y: 8,
+                subCategories: 'Nuclear'
+            }, {
+                y: 8,
+                subCategories: 'Nuclear'
+            }, {
+                y: 12,
+                subCategories: 'Nuclear'
+            }]
         }, {
             name: 'THERMAL',
-            data: [1, 2, 2, 1, 2],
-            color: '#ffd433'
+            data: [{
+                y: 4,
+                subCategories: 'Gencos, IPPS'
+            }, {
+                y: 2,
+                subCategories: 'Gencos, IPPS'
+            }, {
+                y: 6,
+                subCategories: 'Gencos, IPPS'
+            }, {
+                y: 3,
+                subCategories: 'Gencos, IPPS'
+            }]
         }]
     });
-</script>
+</script> -->
+
+
 <!-- <script>
     Highcharts.chart('container_version_2', {
         chart: {
