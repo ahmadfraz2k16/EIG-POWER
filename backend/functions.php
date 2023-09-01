@@ -321,3 +321,242 @@ function endDate(){
     return $greatestDate;
 
 }
+// stacked column [bar graph]
+// Function to extract and format data for major categories and subcategories
+// function extractDataForGraph($startDate, $endDate)
+// {
+//     $HydroSubCategoryNames = array(
+//         "Private",
+//         "Public"
+//     );
+//     $HydroSubCategoryQueries = array(
+//         "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'HYDEL' AND Time BETWEEN '$startDate' AND '$endDate'",
+//         "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS HYDEL HYDEL' AND Time BETWEEN '$startDate' AND '$endDate'"
+
+//     );
+//     // Initialize arrays to store data
+//     $data = array();
+
+//     // Hydro category
+//     $hydroData = array();
+//     foreach ($HydroSubCategoryQueries as $key => $query) {
+//         // Assuming you have a database connection established
+//         $conn = getDatabaseConnection();
+
+//         if ($conn->connect_error) {
+//             die("Connection failed: " . $conn->connect_error);
+//         }
+
+//         $result = $conn->query($query);
+
+//         if ($result->num_rows > 0) {
+//             $row = $result->fetch_assoc();
+
+//             $hydroData[] = array(
+//                 'y' => (float)$row['TotalEnergy'],
+//                 'color' => '#91C8E4', // Custom color for subcategory
+//                 'subCategories' => $HydroSubCategoryNames[$key] . ' (' . (float)$row['TotalEnergy'] . ')',
+//             );
+//         }
+
+//         $conn->close();
+//     }
+
+//     $data[] = array(
+//         'name' => 'HYDRO',
+//         'data' => $hydroData,
+//     );
+
+//     // Add similar code for other major categories (Renewable, Nuclear, Thermal) here...
+
+//     // Convert the data array to JSON format
+//     $jsonData = json_encode($data);
+
+//     return $jsonData;
+// }
+
+
+// function extractDataForGraph($startDate, $endDate)
+// {
+//     // Assuming you have a database connection established
+//     $conn = getDatabaseConnection();
+//     // Initialize arrays to store data
+//     $data = array();
+
+//     // Define an array of hours from 00 to 23
+//     $hours = array("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23");
+
+//     // Initialize arrays to store subcategory sums for each hour
+//     $hydroSubcategorySums = array();
+
+//     // Iterate through the hours and generate data for each hour
+//     foreach ($hours as $hour) {
+//         // Modify your SQL query to group by hour and fetch data within the date range
+//         $query = "SELECT HOUR(Time) AS Hour, sub_categories_by_fuel, SUM(Energy_MWh) AS TotalEnergy 
+//                   FROM mw_new 
+//                   WHERE DATE(Time) BETWEEN '$startDate' AND '$endDate' 
+//                   AND HOUR(Time) = '$hour' 
+//                   GROUP BY Hour, sub_categories_by_fuel";
+
+//         $result = mysqli_query($conn, $query);
+
+//         // Initialize arrays to store private and public subcategory data for this hour
+//         $hourlyPrivateSubcategories = array();
+//         $hourlyPublicSubcategories = array();
+
+//         // Iterate through the result and calculate subcategory sums for this hour
+//         while ($row = mysqli_fetch_assoc($result)) {
+//             $subcategory = $row['sub_categories_by_fuel'];
+//             $totalEnergy = isset($row['TotalEnergy']) ? (float)$row['TotalEnergy'] : 0;
+
+//             // Check if the subcategory is private or public
+//             if ($subcategory === 'IPPS HYDEL HYDEL') {
+//                 // Private subcategory
+//                 $hourlyPrivateSubcategories[] = array(
+//                     'name' => 'Private',
+//                     'y' => $totalEnergy,
+//                     'color' => '#91C8E4', // Custom color for private subcategory
+//                 );
+//             } elseif ($subcategory === 'HYDEL') {
+//                 // Public subcategory
+//                 $hourlyPublicSubcategories[] = array(
+//                     'name' => 'Public',
+//                     'y' => $totalEnergy,
+//                     'color' => '#FFA500', // Custom color for public subcategory
+//                 );
+//             }
+
+//             // Update the sum for the subcategory in the overall sum array
+//             if (!isset($hydroSubcategorySums[$subcategory])) {
+//                 $hydroSubcategorySums[$subcategory] = 0;
+//             }
+//             $hydroSubcategorySums[$subcategory] += $totalEnergy;
+//         }
+
+//         // Add the data for this hour to the main data array
+//         $data[] = array(
+//             'hour' => $hour,
+//             'privateSubcategories' => $hourlyPrivateSubcategories, // Add private subcategory data for this hour
+//             'publicSubcategories' => $hourlyPublicSubcategories,   // Add public subcategory data for this hour
+//         );
+//     }
+
+//     // Calculate the sum for the "HYDRO" major category
+//     $hydroTotal = array_sum($hydroSubcategorySums);
+
+//     // Convert the data array to JSON format along with the "HYDRO" total
+//     $jsonData = json_encode(array(
+//         'data' => $data,
+//         'hydroTotal' => $hydroTotal, // Add the total for "HYDRO"
+//     ));
+//     // Convert the data array to JSON format
+//     $jsonData = json_encode($data);
+//     return $jsonData;
+// }
+function extractDataForGraph($startDate, $endDate){
+    $conn = getDatabaseConnection();
+    // Construct the SQL query to select specific columns
+    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 04:00:00'";
+
+    // Execute the query and fetch the results
+    $result = mysqli_query($conn, $sql);
+
+    if (!$result) {
+        // Handle the error if the query fails
+        $response = array('error' => 'Database error: ' . mysqli_error($conn));
+        echo json_encode($response);
+        return;
+    }
+
+    // Initialize an array to store the summed data
+    $summedData = array();
+
+    // Fetch rows and sum the Energy_MWh for each sub_categories_by_fuel for each hour
+    while ($row = mysqli_fetch_assoc($result)) {
+        $time = $row['Time'];
+        $hour = date('H', strtotime($time));
+        $subCategory = $row['sub_categories_by_fuel'];
+        $energy = (float)$row['Energy_MWh'];
+
+        // Initialize the array for the hour if it doesn't exist
+        if (!isset($summedData[$time])) {
+            $summedData[$time] = array();
+        }
+
+        // Initialize the sum for the sub_category if it doesn't exist
+        if (!isset($summedData[$time][$subCategory])) {
+            $summedData[$time][$subCategory] = 0.0;
+        }
+
+        // Sum the Energy_MWh for the sub_category and hour
+        $summedData[$time][$subCategory] += $energy;
+    }
+
+    // Close the database connection
+    mysqli_close($conn);
+
+    // Create an associative array with "DATE" key
+    $finalData = array();
+    foreach ($summedData as $time => $data) {
+        $finalData[] = array("DATE" => $time) + $data;
+    }
+
+    //EXTRA PROCESSING
+    
+
+    // Initialize an array to store the modified data
+    $modifiedData = array();
+
+    // Loop through the data and perform calculations
+    // Loop through the data and perform calculations
+    foreach ($finalData as $element) {
+        // Calculate the values for each category
+        $public = $element['HYDEL'];
+        $private = $element['IPPS HYDEL HYDEL'];
+        $SOLAR = $element['SOLAR'];
+        $WIND = $element['WIND'];
+        $BAGASSE = $element['IPPS BAGASSE BAGASSE'];
+        $NUCLEAR = $element['NUCLEAR'];
+        $GENCOS = $element['GENCOS RLNG'] + $element['GENCOS Coal'] + $element['GENCOS Gas'];
+        $IPPS = $element['IPPS FOSSIL FUEL Gas'] + $element['IPPS FOSSIL FUEL Coal'] + $element['IPPS FOSSIL FUEL FO'] + $element['IPPS FOSSIL FUEL RLNG'];
+        $HYDEL = array(
+            "PRIVATE" => $private,
+            "PUBLIC" => $public,
+        );
+        $RENEWABLE = array(
+            "SOLAR" => $SOLAR,
+            "WIND" => $WIND,
+            "BAGASSE" => $BAGASSE,
+        );
+        $NUCLEAR = array(
+            "NUCLEAR" => $NUCLEAR,
+        );
+        $THERMAL = array(
+            "GENCOS" => $GENCOS,
+            "IPPS" => $IPPS,
+        );
+
+        // Create a new array with the modified values
+        $modifiedElement = array(
+            "DATE" => $element['DATE'],
+            "HYDEL" => $HYDEL,
+            "RENEWABLE" => $RENEWABLE,
+            "NUCLEAR" => $NUCLEAR,
+            "THERMAL" => $THERMAL,
+        );
+
+        // Add the modified element to the result array
+        $modifiedData[] = $modifiedElement;
+    }
+
+    
+    // // Encode the summed data as JSON and send it as a response
+    return json_encode($modifiedData, JSON_PRETTY_PRINT);
+}
+// // Example usage:
+// $startDate = '2022-03-02';
+// $endDate = '2022-03-02';
+
+// $jsonData = extractDataForGraph($startDate, $endDate);
+// // $array = json_decode($jsonData, true); // convert the JSON string to an associative array
+// var_dump($jsonData);

@@ -60,10 +60,11 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             <!-- Cards will be displayed here -->
         </div>
         <!-- high chart should be displayed here -->
+        <div id="container7" style="width:100%; height:400px;"></div>
         <div id="container6" style="width:100%; height:400px;"></div>
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
+        <div id="container_version_2" style="width:100%; height:400px;"></div>
         <!-- End Row -->
 
 
@@ -170,6 +171,85 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 
 
+<script>
+    <?php
+    $startDate = '2022-03-02';
+    $endDate = '2022-03-02'; 
+    ?>
+    var data = <?php extractDataForGraph($startDate, $endDate) ?>
+    Highcharts.chart('container7', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Energy Distribution By Major Categories',
+            align: 'left'
+        },
+        xAxis: {
+            categories: ['2022-03-02 00:00:00', '2022-03-02 01:00:00', '2022-03-02 02:00:00', '2022-03-02 03:00:00']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'GENERATION MWh'
+            },
+            stackLabels: {
+                enabled: true
+            }
+        },
+        legend: {
+            align: 'left',
+            x: 70,
+            verticalAlign: 'top',
+            y: 70,
+            floating: true,
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+        tooltip: {
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormatter: function() {
+                let subCategories = Object.keys(this.series.userOptions.data[this.index]);
+                subCategories.shift(); // Remove DATE from subCategories
+                let subCategoriesStr = subCategories.map(subCat => `${subCat} (${this.series.userOptions.data[this.index][subCat]})`).join(', ');
+                return `${this.series.name}: ${this.y}<br/>Total: ${this.stackTotal}<br/>Sub categories:<br/>${subCategoriesStr}`;
+            }
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], // Custom color hash for main categories
+        series: []
+    }, function(chart) {
+        // Callback function to add series dynamically
+        let data = /* Your JSON response data here */ ;
+        let categories = Object.keys(data[0]); // Get category names (e.g., HYDEL, RENEWABLE, NUCLEAR, THERMAL)
+
+        categories.shift(); // Remove DATE from categories
+
+        categories.forEach(category => {
+            let seriesData = data.map(point => ({
+                y: point[category] ? point[category].PRIVATE + point[category].PUBLIC : 0, // Calculate the total for the major category
+                color: category === 'HYDEL' ? '#91C8E4' : // Set custom colors
+                    category === 'RENEWABLE' ? '#A8DF8E' : category === 'NUCLEAR' ? '#FF6969' : category === 'THERMAL' ? '#F0B86E' : '',
+                subCategories: category === 'HYDEL' ? `Private (${point.HYDEL.PRIVATE}), Public (${point.HYDEL.PUBLIC})` : // Generate subCategories string
+                    category === 'RENEWABLE' ? `Solar (${point.RENEWABLE.SOLAR}), Wind (${point.RENEWABLE.WIND}), Bagasse (${point.RENEWABLE.BAGASSE})` : category === 'NUCLEAR' ? `Nuclear (${point.NUCLEAR.NUCLEAR})` : category === 'THERMAL' ? `Gencos (${point.THERMAL.GENCOS}), IPPS (${point.THERMAL.IPPS})` : ''
+            }));
+
+            chart.addSeries({
+                name: category,
+                data: seriesData
+            });
+        });
+    });
+</script>
 
 <script>
     Highcharts.chart('container6', {
@@ -181,7 +261,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             align: 'left'
         },
         xAxis: {
-            categories: ['2022-03-02', '2022-03-03', '2022-03-04', '2022-03-05']
+            categories: ['2022-03-02 00:00:00', '2022-03-02 01:00:00', '2022-03-02 02:00:00', '2022-03-02 03:00:00']
         },
         yAxis: {
             min: 0,
