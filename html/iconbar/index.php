@@ -171,7 +171,16 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 
 
+<?php
+// echo formatedGraphData();
+$startDate = '2022-03-02';
+$endDate = '2022-03-02';
+$jsonData = extractDataForGraph($startDate, $endDate);
+$array = json_decode($jsonData, true);
 
+$extractedDates = extractDates($array);
+
+?>
 
 <!-- Add Highcharts configuration in JavaScript -->
 <script>
@@ -184,7 +193,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             align: 'left'
         },
         xAxis: {
-            categories: ['2022-03-02 00:00:00', '2022-03-02 01:00:00', '2022-03-02 02:00:00', '2022-03-02 03:00:00']
+            categories: <?php echo $extractedDates; ?>
         },
         yAxis: {
             min: 0,
