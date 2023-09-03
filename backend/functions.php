@@ -456,7 +456,7 @@ function endDate(){
 function extractDataForGraph($startDate, $endDate){
     $conn = getDatabaseConnection();
     // Construct the SQL query to select specific columns
-    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 04:00:00'";
+    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 23:00:00'";
 
     // Execute the query and fetch the results
     $result = mysqli_query($conn, $sql);
@@ -553,10 +553,244 @@ function extractDataForGraph($startDate, $endDate){
     // // Encode the summed data as JSON and send it as a response
     return json_encode($modifiedData, JSON_PRETTY_PRINT);
 }
-// // Example usage:
-// $startDate = '2022-03-02';
-// $endDate = '2022-03-02';
 
-// $jsonData = extractDataForGraph($startDate, $endDate);
-// // $array = json_decode($jsonData, true); // convert the JSON string to an associative array
-// var_dump($jsonData);
+// var_dump($array);
+// Assuming your data is stored in the $dataArray variable
+// foreach ($array as $entry) {
+//     // Access and display the date
+//     $date = $entry['DATE'];
+//     echo "Date: $date<br>";
+
+//     // Loop through the main categories
+//     foreach ($entry as $categoryKey => $categoryValue) {
+//         // Skip the 'DATE' key
+//         if ($categoryKey === 'DATE') continue;
+
+//         // Display the main category name
+//         echo "Main Category: $categoryKey<br>";
+
+//         // Loop through the subcategories and their values
+//         foreach ($categoryValue as $subcategoryKey => $subcategoryValue) {
+//             // Display the subcategory and its production value
+//             echo "Subcategory: $subcategoryKey, Production Value: $subcategoryValue<br>";
+//         }
+//     }
+
+//     // Add a separator between entries
+//     echo "<hr>";
+// }
+function formatedGraphData()
+{
+    $startDate = '2022-03-02';
+    $endDate = '2022-03-02';
+    $jsonData = extractDataForGraph($startDate, $endDate);
+    $array = json_decode($jsonData, true);
+    $formattedData = [];
+    $subCategoriesData = [];
+
+    foreach ($array as $entry) {
+        // Get the hour from the date field
+        $hour = date('H', strtotime($entry['DATE']));
+
+        foreach ($entry as $categoryKey => $categoryValue) {
+            if ($categoryKey === 'DATE') continue;
+
+            foreach ($categoryValue as $subcategoryKey => $subcategoryValue) {
+                // Check if the main category name and hour exist in the subCategoriesData array
+                if (!isset($subCategoriesData[$categoryKey][$hour])) {
+                    // If not, create a new entry with the sum and subcategories fields
+                    $subCategoriesData[$categoryKey][$hour] = [
+                        'sum' => 0,
+                        'subCategories' => [],
+                    ];
+                }
+
+                // Add the subcategory value to the sum field
+                $subCategoriesData[$categoryKey][$hour]['sum'] += $subcategoryValue;
+
+                // Create a formatted subcategory string
+                $subcategoryFormatted = "$subcategoryKey ($subcategoryValue)";
+
+                // Add the subcategory string to the subcategories field
+                $subCategoriesData[$categoryKey][$hour]['subCategories'][] = $subcategoryFormatted;
+            }
+        }
+    }
+
+    foreach ($subCategoriesData as $mainCategoryName => $mainCategoryHours) {
+        // Create a data entry for the formatted data array
+        $dataEntry = [];
+
+        foreach ($mainCategoryHours as $hour => $hourData) {
+            // Create a data entry for each hour
+            $dataEntry[] = [
+                'y' => $hourData['sum'], // Use the sum field as the y value
+                'color' => '#91C8E4', // Custom color for the main category
+                'subCategories' => implode(', ', $hourData['subCategories']), // Join the subcategories with commas
+            ];
+        }
+
+        // Add the data entry to the formatted data array
+        $formattedData[] = [
+            'name' => $mainCategoryName,
+            'data' => $dataEntry, // Use the data entry as an array
+        ];
+    }
+
+    // Convert the formatted data to JSON
+    $formattedDataJson = json_encode($formattedData, JSON_PRETTY_PRINT);
+
+    // Print the JSON data
+    return $formattedDataJson;
+}
+
+
+
+// function formatedGraphData(){
+//     // Example usage:
+//     $startDate = '2022-03-02';
+//     $endDate = '2022-03-02';
+
+//     $jsonData = extractDataForGraph($startDate, $endDate);
+//     $array = json_decode($jsonData, true); // convert the JSON string to an associative array
+//     // Initialize an empty array to store the formatted data
+//     $formattedData = [];
+
+//     // Create an empty array to store subcategories for each main category
+//     $subCategoriesData = [];
+
+//     // Loop through your existing data
+//     foreach ($array as $entry) {
+//         // Loop through the main categories and their subcategories
+//         foreach ($entry as $categoryKey => $categoryValue) {
+//             // Skip the 'DATE' key
+//             if ($categoryKey === 'DATE'
+//             ) continue;
+
+//             // Create an array for the subcategories and their production values
+//             $subcategoryData = [];
+//             foreach ($categoryValue as $subcategoryKey => $subcategoryValue) {
+//                 // Format the subcategory and its production value
+//                 $subcategoryFormatted = "$subcategoryKey ($subcategoryValue)";
+//                 $subcategoryData[] = [
+//                     'y' => $subcategoryValue,
+//                     'color' => '#91C8E4', // Custom color for the subcategory
+//                     'subCategories' => $subcategoryFormatted,
+//                 ];
+//             }
+
+//             // Use the main category name as the 'name' key
+//             $mainCategoryName = $categoryKey;
+
+//             // Store the subcategories data for each main category
+//             if (!isset($subCategoriesData[$mainCategoryName])) {
+//                 $subCategoriesData[$mainCategoryName] = $subcategoryData;
+//             } else {
+//                 // Merge subcategories data for the same main category
+//                 $subCategoriesData[$mainCategoryName] = array_merge($subCategoriesData[$mainCategoryName], $subcategoryData);
+//             }
+//         }
+//     }
+
+//     // Create the final formatted data structure with one 'data' key per main category
+//     foreach ($subCategoriesData as $mainCategoryName => $mainCategoryData) {
+//         $formattedData[] = [
+//             'name' => $mainCategoryName,
+//             'data' => $mainCategoryData,
+//         ];
+//     }
+
+//     // Convert the formatted data to JSON
+//     $formattedDataJson = json_encode($formattedData, JSON_PRETTY_PRINT);
+
+//     // Print the JSON data
+//     return $formattedDataJson;
+
+// }
+echo formatedGraphData();
+
+
+
+// // Your data as an array of objects
+// $data = json_decode($jsonData);
+
+// // A function to convert an object to a series array
+// function object_to_series($obj)
+// {
+//     // Get the keys and values of the object
+//     $keys = array_keys(get_object_vars($obj));
+//     $values = array_values(get_object_vars($obj));
+
+//     // Format the numeric values with two decimal digits
+//     $values = array_map(function ($v) {
+//         return is_numeric($v) ? number_format($v, 2) : $v;
+//     }, $values);
+
+//     // Return the series array with the name and data keys
+//     return array(
+//         "name" => $keys[0],
+//         "data" => $values
+//     );
+// }
+
+// // Convert each object in the data to a series array
+// $series = array_map("object_to_series", $data);
+// // Print the output
+// print_r($series) ;
+
+
+
+
+
+
+// $startingDate = '2022-03-02';
+// $endingDate = '2022-03-02';
+
+// $responseData = extractDataForGraph($startingDate, $endingDate); 
+// // Decode the JSON response
+// $data = json_decode($responseData, true);
+
+// // Initialize arrays for categories, series data, and colors
+// $categories = [];
+// $seriesData = [];
+// $colors = ['#91C8E4', '#A8DF8E', '#FF6969', '#F0B86E']; // Custom colors for major categories
+
+// // Loop through data to format it for Highcharts
+// foreach ($data as $item) {
+//     $categories[] = $item['DATE'];
+
+//     // Loop through major categories ('HYDEL', 'RENEWABLE', 'NUCLEAR', 'THERMAL')
+//     foreach (array_keys($item) as $majorCategory) {
+//         if ($majorCategory === 'DATE') continue; // Skip 'DATE' key
+
+//         // Loop through subcategories ('PRIVATE', 'PUBLIC', 'SOLAR', 'WIND', 'BAGASSE', 'NUCLEAR', 'GENCOS', 'IPPS')
+//         foreach ($item[$majorCategory] as $subcategory => $value) {
+//             // Prepare data point for subcategory
+//             $dataPoint = [
+//                 'y' => $value,
+//                 'color' => $colors[array_search($majorCategory, array_keys($item))], // Use custom color for major category
+//                 'subCategories' => $subcategory . ' (' . $value . ')',
+//             ];
+
+//             // Add data point to the corresponding series
+//             $seriesData[$majorCategory][] = $dataPoint;
+//         }
+//     }
+// }
+
+
+
+// // //xAxis: categories:
+// // echo json_encode($categories); 
+// // echo json_encode($colors);  // Use the custom colors for major categories
+
+
+// // Generate series for each major category
+// foreach ($seriesData as $majorCategory => $data) {
+// echo "{
+//     name: '$majorCategory',
+//     data: " . json_encode($data) . "
+// },";
+// }
+
+        

@@ -61,10 +61,10 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         </div>
         <!-- high chart should be displayed here -->
         <div id="container7" style="width:100%; height:400px;"></div>
-        <div id="container6" style="width:100%; height:400px;"></div>
+        <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <div id="container_version_2" style="width:100%; height:400px;"></div>
+        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
 
 
@@ -171,42 +171,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 
 
-<?php
-$startingDate = '2022-03-02';
-$endingDate = '2022-03-02';
 
-$responseData = extractDataForGraph($startingDate, $endingDate); 
-// Decode the JSON response
-$data = json_decode($responseData, true);
-
-// Initialize arrays for categories, series data, and colors
-$categories = [];
-$seriesData = [];
-$colors = ['#91C8E4', '#A8DF8E', '#FF6969', '#F0B86E']; // Custom colors for major categories
-
-// Loop through data to format it for Highcharts
-foreach ($data as $item) {
-    $categories[] = $item['DATE'];
-
-    // Loop through major categories ('HYDEL', 'RENEWABLE', 'NUCLEAR', 'THERMAL')
-    foreach (array_keys($item) as $majorCategory) {
-        if ($majorCategory === 'DATE') continue; // Skip 'DATE' key
-
-        // Loop through subcategories ('PRIVATE', 'PUBLIC', 'SOLAR', 'WIND', 'BAGASSE', 'NUCLEAR', 'GENCOS', 'IPPS')
-        foreach ($item[$majorCategory] as $subcategory => $value) {
-            // Prepare data point for subcategory
-            $dataPoint = [
-                'y' => $value,
-                'color' => $colors[array_search($majorCategory, array_keys($item))], // Use custom color for major category
-                'subCategories' => $subcategory . ' (' . $value . ')',
-            ];
-
-            // Add data point to the corresponding series
-            $seriesData[$majorCategory][] = $dataPoint;
-        }
-    }
-}
-?>
 
 <!-- Add Highcharts configuration in JavaScript -->
 <script>
@@ -219,7 +184,7 @@ foreach ($data as $item) {
             align: 'left'
         },
         xAxis: {
-            categories: <?php echo json_encode($categories); ?> // Use the generated categories
+            categories: ['2022-03-02 00:00:00', '2022-03-02 01:00:00', '2022-03-02 02:00:00', '2022-03-02 03:00:00']
         },
         yAxis: {
             min: 0,
@@ -253,18 +218,12 @@ foreach ($data as $item) {
                 }
             }
         },
-        colors: <?php echo json_encode($colors); ?>, // Use the custom colors for major categories
-        series: [
-            <?php
-            // Generate series for each major category
-            foreach ($seriesData as $majorCategory => $data) {
-                echo "{
-                    name: '$majorCategory',
-                    data: " . json_encode($data) . "
-                },";
-            }
-            ?>
-        ]
+        colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], // Use the custom colors for major categories
+        series: <?php
+                // Generate series for each major category
+                echo formatedGraphData();
+                ?>
+
     });
 </script>
 
@@ -315,80 +274,80 @@ foreach ($data as $item) {
         },
         colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], //custom color hash for main categories
         series: [{
-            name: 'HYDRO',
+            name: 'HYDEL',
             data: [{
                 y: 3,
                 color: '#91C8E4', //custom color hash for sub category
-                subCategories: 'Private (1.5), Public (1.5)' //dummy values for sub category
+                subCategories: 'PRIVATE (1.5), PUBLIC (1.5)' //dummy values for sub category
             }, {
                 y: 5,
                 color: '#91C8E4',
-                subCategories: 'Private (2.5), Public (2.5)'
+                subCategories: 'PRIVATE (2.5), PUBLIC (2.5)'
             }, {
                 y: 3,
                 color: '#91C8E4',
-                subCategories: 'Private (1.5), Public (1.5)'
+                subCategories: 'PRIVATE (1.5), PUBLIC (1.5)'
             }, {
                 y: 13,
                 color: '#91C8E4',
-                subCategories: 'Private (6.5), Public (6.5)'
+                subCategories: 'PRIVATE (6.5), PUBLIC (6.5)'
             }]
         }, {
             name: 'RENEWABLE',
             data: [{
                 y: 14,
                 color: '#A8DF8E',
-                subCategories: 'Solar (4.7), Wind (4.7), Bagasse (4.6)'
+                subCategories: 'SOLAR (4.7), WIND (4.7), BAGASSE (4.6)'
             }, {
                 y: 8,
                 color: '#A8DF8E',
-                subCategories: 'Solar (2.7), Wind (2.7), Bagasse (2.6)'
+                subCategories: 'SOLAR (2.7), WIND (2.7), BAGASSE (2.6)'
             }, {
                 y: 8,
                 color: '#A8DF8E',
-                subCategories: 'Solar (2.7), Wind (2.7), Bagasse (2.6)'
+                subCategories: 'SOLAR (2.7), WIND (2.7), BAGASSE (2.6)'
             }, {
                 y: 12,
                 color: '#A8DF8E',
-                subCategories: 'Solar (4), Wind (4), Bagasse (4)'
+                subCategories: 'SOLAR (4), WIND (4), BAGASSE (4)'
             }]
         }, {
             name: 'NUCLEAR',
             data: [{
                 y: 14,
                 color: '#FF6969',
-                subCategories: 'Nuclear (14)'
+                subCategories: 'NUCLEAR (14)'
             }, {
                 y: 8,
                 color: '#FF6969',
-                subCategories: 'Nuclear (8)'
+                subCategories: 'NUCLEAR (8)'
             }, {
                 y: 8,
                 color: '#FF6969',
-                subCategories: 'Nuclear (8)'
+                subCategories: 'NUCLEAR (8)'
             }, {
                 y: 12,
                 color: '#FF6969',
-                subCategories: 'Nuclear (12)'
+                subCategories: 'NUCLEAR (12)'
             }]
         }, {
             name: 'THERMAL',
             data: [{
                 y: 4,
                 color: '#F0B86E',
-                subCategories: 'Gencos (2), IPPS (2)'
+                subCategories: 'GENCOS (2), IPPS (2)'
             }, {
                 y: 2,
                 color: '#F0B86E',
-                subCategories: 'Gencos (1), IPPS (1)'
+                subCategories: 'GENCOS (1), IPPS (1)'
             }, {
                 y: 6,
                 color: '#F0B86E',
-                subCategories: 'Gencos (3), IPPS (3)'
+                subCategories: 'GENCOS (3), IPPS (3)'
             }, {
                 y: 3,
                 color: '#F0B86E',
-                subCategories: 'Gencos (1.5), IPPS (1.5)'
+                subCategories: 'GENCOS (1.5), IPPS (1.5)'
             }]
         }]
     });
