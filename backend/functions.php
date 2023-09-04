@@ -640,5 +640,34 @@ function extractDates($inputArray)
     return '[' . implode(', ', $dates) . ']';
 }
 
+function getUniqueDates()
+{
+    // Replace with your database connection code
+    $mysqli = new mysqli("localhost", "root", "", "power");
 
+    // Check connection
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    }
+
+    $dates = [];
+
+    // Query to retrieve distinct dates (without hours) from your database table
+    $query = "SELECT DISTINCT DATE(Time) AS DateOnly FROM mw_new";
+    $result = $mysqli->query($query);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $dates[] = $row['DateOnly'];
+        }
+    }
+
+    // Close the database connection
+    $mysqli->close();
+
+    // Return dates as JSON
+    return json_encode($dates);
+}
+
+// var_dump(getUniqueDates());
 

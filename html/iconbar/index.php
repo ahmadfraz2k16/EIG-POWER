@@ -59,6 +59,9 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <div id="cardsContainer" class="card-group">
             <!-- Cards will be displayed here -->
         </div>
+        <!-- Create a dropdown menu to select a date -->
+        <label for="dateSelector">Select a Date:</label>
+        <select id="dateSelector"></select>
         <!-- high chart should be displayed here -->
         <div id="container7" style="width:100%; height:400px;"></div>
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
@@ -93,7 +96,23 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 ?>
 <?php include('include/footer.php'); ?>
 
+<script>
+    // Parse the JSON string containing dates
+    var datesJson = '<?= getUniqueDates() ?>';
+    var datesArray = JSON.parse(datesJson);
 
+    // Get the select element
+    var dateSelector = document.getElementById('dateSelector');
+
+    // Loop through the dates and add options to the select element
+    for (var i = 0; i < datesArray.length; i++) {
+        var date = datesArray[i];
+        var option = document.createElement('option');
+        option.value = date;
+        option.text = date;
+        dateSelector.appendChild(option);
+    }
+</script>
 <!-- stacked column bar chart container_version_2 -->
 <script>
     <?php
