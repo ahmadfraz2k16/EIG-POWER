@@ -64,7 +64,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
+        <div id="container_version_2" style="width:100%; height:400px;"></div>
         <!-- End Row -->
 
 
@@ -173,8 +173,8 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 <?php
 // echo formatedGraphData();
-$startDate = '2022-03-02';
-$endDate = '2022-03-02';
+$startDate = '2022-03-05';
+$endDate = '2022-03-5';
 $jsonData = extractDataForGraph($startDate, $endDate);
 $array = json_decode($jsonData, true);
 
@@ -230,7 +230,7 @@ $extractedDates = extractDates($array);
         colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], // Use the custom colors for major categories
         series: <?php
                 // Generate series for each major category
-                echo formatedGraphData();
+                echo formatedGraphData($array);
                 ?>
 
     });

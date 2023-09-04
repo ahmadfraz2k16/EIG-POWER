@@ -456,7 +456,7 @@ function endDate(){
 function extractDataForGraph($startDate, $endDate){
     $conn = getDatabaseConnection();
     // Construct the SQL query to select specific columns
-    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 10:00:00'";
+    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 23:00:00'";
 
     // Execute the query and fetch the results
     $result = mysqli_query($conn, $sql);
@@ -554,12 +554,10 @@ function extractDataForGraph($startDate, $endDate){
     return json_encode($modifiedData, JSON_PRETTY_PRINT);
 }
 
-function formatedGraphData()
+function formatedGraphData($jsonDecodedData)
 {
-    $startDate = '2022-03-02';
-    $endDate = '2022-03-02';
-    $jsonData = extractDataForGraph($startDate, $endDate);
-    $array = json_decode($jsonData, true);
+    
+    $array = $jsonDecodedData;
     $formattedData = [];
     $subCategoriesData = [];
     // Define custom colors for categories
@@ -606,7 +604,7 @@ function formatedGraphData()
         foreach ($mainCategoryHours as $hour => $hourData) {
             // Create a data entry for each hour
             $dataEntry[] = [
-                'y' => $hourData['sum'], // Use the sum field as the y value
+                'y' => (int) $hourData['sum'], // Use the sum field as the y value
                 'color' => $categoryColors[$mainCategoryName], // Custom color for the main category
                 'subCategories' => implode(', ', $hourData['subCategories']), // Join the subcategories with commas
             ];
