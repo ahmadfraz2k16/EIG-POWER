@@ -456,7 +456,7 @@ function endDate(){
 function extractDataForGraph($startDate, $endDate){
     $conn = getDatabaseConnection();
     // Construct the SQL query to select specific columns
-    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 23:00:00'";
+    $sql = "SELECT Time, Energy_MWh, sub_categories_by_fuel FROM mw_new WHERE `Time` >= '$startDate 00:00:00' AND `Time` <= '$endDate 02:00:00'";
 
     // Execute the query and fetch the results
     $result = mysqli_query($conn, $sql);
@@ -668,6 +668,94 @@ function getUniqueDates()
     // Return dates as JSON
     return json_encode($dates);
 }
+// testing combination of function
+function formattedGraphDataV2($jsonDecodedData)
+{
+    $array = $jsonDecodedData;
+    $formattedData = [];
+    $subCategoriesData = [];
+    $extractedDates = [];
+    $extractedDates = extractDates($array);
 
-// var_dump(getUniqueDates());
+    // Define custom colors for categories
+    $categoryColors = [
+        'HYDEL' => '#7091F5',
+        'RENEWABLE' => '#5C8374',
+        'NUCLEAR' => '#9A3B3B',
+        'THERMAL' => '#F0B86E',
+    ];
 
+    foreach ($array as $entry) {
+        // Get the hour from the date field
+        $hour = date('H', strtotime($entry['DATE']));
+
+        foreach ($entry as $categoryKey => $categoryValue) {
+            if ($categoryKey === 'DATE') continue;
+
+            foreach ($categoryValue as $subcategoryKey => $subcategoryValue) {
+                // Check if the main category name and hour exist in the subCategoriesData array
+                if (!isset($subCategoriesData[$categoryKey][$hour])) {
+                    // If not, create a new entry with the sum and subcategories fields
+                    $subCategoriesData[$categoryKey][$hour] = [
+                        'sum' => 0,
+                        'subCategories' => [],
+                    ];
+                }
+
+                // Add the subcategory value to the sum field
+                $subCategoriesData[$categoryKey][$hour]['sum'] += $subcategoryValue;
+
+                // Create a formatted subcategory string
+                $subcategoryFormatted = "$subcategoryKey ($subcategoryValue)";
+
+                // Add the subcategory string to the subcategories field
+                $subCategoriesData[$categoryKey][$hour]['subCategories'][] = $subcategoryFormatted;
+            }
+        }
+    }
+
+    foreach ($subCategoriesData as $mainCategoryName => $mainCategoryHours) {
+        // Create a data entry for the formatted data array
+        $dataEntry = [];
+
+        foreach ($mainCategoryHours as $hour => $hourData) {
+            // Create a data entry for each hour
+            $dataEntry[] = [
+                'y' => (int) $hourData['sum'], // Use the sum field as the y value
+                'color' => $categoryColors[$mainCategoryName], // Custom color for the main category
+                'subCategories' => implode(', ', $hourData['subCategories']), // Join the subcategories with commas
+            ];
+        }
+
+        // Add the data entry to the formatted data array
+        $formattedData[] = [
+            'name' => $mainCategoryName,
+            'data' => $dataEntry, // Use the data entry as an array
+        ];
+    }
+
+    // Convert the formatted data to JSON
+    $formattedDataJson = json_encode($formattedData, JSON_PRETTY_PRINT);
+
+    // Print the JSON data
+    // return $formattedDataJson;
+
+    // Return both the extracted dates and formatted data as an associative array
+    return [
+        'dates' => $extractedDates,
+        'series' => $formattedDataJson,
+    ];
+}
+// $startDate = '2022-03-05';
+// $endDate = '2022-03-5';
+// $jsonData = extractDataForGraph($startDate, $endDate);
+// $array = json_decode($jsonData, true);
+// // Call the formattedGraphData function and store the result
+// $formattedData = formattedGraphDataV2($array);
+
+// // Extract the dates and series data
+// $extractedDates = $formattedData['dates'];
+// $seriesData = $formattedData['series'];
+
+// var_dump($extractedDates);
+// var_dump($seriesData);

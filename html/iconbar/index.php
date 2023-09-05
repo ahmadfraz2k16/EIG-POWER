@@ -104,6 +104,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
     // Get the select element
     var dateSelector = document.getElementById('dateSelector');
 
+
     // Loop through the dates and add options to the select element
     for (var i = 0; i < datesArray.length; i++) {
         var date = datesArray[i];
@@ -112,7 +113,168 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         option.text = date;
         dateSelector.appendChild(option);
     }
+    // Function to update the chart using XHR AJAX
+    function updateChart(selectedDate) {
+        // Make an AJAX request
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `get_bar_data.php?selectedDate=${selectedDate}`);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var data = xhr.response;
+                // Parse the JSON response into a JavaScript object
+                var responseData = JSON.parse(xhr.responseText);
+
+                // Access the dates and series properties
+                var thedates = responseData.dates;
+                var theseries = responseData.series;
+                // Convert the dates and series to JSON strings
+                var datesJSON = JSON.stringify(thedates);
+                var seriesJSON = JSON.stringify(theseries);
+                console.log(thedates);
+                console.log(theseries);
+                alert(thedates);
+                alert(theseries);
+                // Update the chart with the new data
+                Highcharts.chart('container7', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Energy Distribution By Major Categories',
+                        align: 'left'
+                    },
+                    xAxis: {
+                        categories: ['2022-03-08 00:00:00', '2022-03-08 01:00:00', '2022-03-08 02:00:00']
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'GENERATION MWh'
+                        },
+                        stackLabels: {
+                            enabled: true
+                        }
+                    },
+                    legend: {
+                        align: 'left',
+                        x: 70,
+                        verticalAlign: 'top',
+                        y: 70,
+                        floating: true,
+                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{point.x}</b><br/>',
+                        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}<br/>Sub categories:<br/>{point.subCategories}'
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true
+                            }
+                        }
+                    },
+                    colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], // Use the custom colors for major categories
+                    series: [{
+                            "name": "HYDEL",
+                            "data": [{
+                                    "y": 1572,
+                                    "color": "#7091F5",
+                                    "subCategories": "PRIVATE (184), PUBLIC (1388)"
+                                },
+                                {
+                                    "y": 1548,
+                                    "color": "#7091F5",
+                                    "subCategories": "PRIVATE (246), PUBLIC (1302)"
+                                },
+                                {
+                                    "y": 1708,
+                                    "color": "#7091F5",
+                                    "subCategories": "PRIVATE (246), PUBLIC (1462)"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "RENEWABLE",
+                            "data": [{
+                                    "y": 190,
+                                    "color": "#5C8374",
+                                    "subCategories": "SOLAR (0), WIND (6), BAGASSE (184)"
+                                },
+                                {
+                                    "y": 613,
+                                    "color": "#5C8374",
+                                    "subCategories": "SOLAR (0), WIND (430), BAGASSE (183)"
+                                },
+                                {
+                                    "y": 675,
+                                    "color": "#5C8374",
+                                    "subCategories": "SOLAR (0), WIND (491), BAGASSE (184)"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "NUCLEAR",
+                            "data": [{
+                                    "y": 2165,
+                                    "color": "#9A3B3B",
+                                    "subCategories": "NUCLEAR (2165)"
+                                },
+                                {
+                                    "y": 2213,
+                                    "color": "#9A3B3B",
+                                    "subCategories": "NUCLEAR (2213)"
+                                },
+                                {
+                                    "y": 2213,
+                                    "color": "#9A3B3B",
+                                    "subCategories": "NUCLEAR (2213)"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "THERMAL",
+                            "data": [{
+                                    "y": 6854,
+                                    "color": "#F0B86E",
+                                    "subCategories": "GENCOS (614.23), IPPS (6240)"
+                                },
+                                {
+                                    "y": 5748,
+                                    "color": "#F0B86E",
+                                    "subCategories": "GENCOS (574.89), IPPS (5174)"
+                                },
+                                {
+                                    "y": 4964,
+                                    "color": "#F0B86E",
+                                    "subCategories": "GENCOS (489.87), IPPS (4475)"
+                                }
+                            ]
+                        }
+                    ]
+
+                });
+
+            }
+        };
+        xhr.send();
+    }
+
+
+    // Add an event listener to trigger chart update on date selection change
+    dateSelector.addEventListener('change', function() {
+        // Get the selected date value
+        var selectedDate = dateSelector.value;
+        alert(selectedDate);
+        // Call the function to update the chart with the selected date
+        updateChart(selectedDate);
+    });
 </script>
+
 <!-- stacked column bar chart container_version_2 -->
 <script>
     <?php
@@ -192,18 +354,23 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 <?php
 // echo formatedGraphData();
-$startDate = '2022-03-05';
-$endDate = '2022-03-5';
-$jsonData = extractDataForGraph($startDate, $endDate);
+$startDatew = '2022-03-03';
+$endDatew = '2022-03-5';
+$jsonData = extractDataForGraph($startDatew, $endDatew);
 $array = json_decode($jsonData, true);
 
-$extractedDates = extractDates($array);
+// $extractedDates = extractDates($array);
+// Call the formattedGraphData function and store the result
+$formattedData = formattedGraphDataV2($array);
 
+// Extract the dates and series data
+$extractedDates = $formattedData['dates'];
+$seriesData = $formattedData['series'];
 ?>
 
 <!-- Add Highcharts configuration in JavaScript -->
 <script>
-    Highcharts.chart('container7', {
+    Highcharts.chart('container7olderversion', {
         chart: {
             type: 'column'
         },
@@ -249,7 +416,7 @@ $extractedDates = extractDates($array);
         colors: ['#7091F5', '#5C8374', '#9A3B3B', '#F0B86E'], // Use the custom colors for major categories
         series: <?php
                 // Generate series for each major category
-                echo formatedGraphData($array);
+                echo $seriesData;
                 ?>
 
     });
