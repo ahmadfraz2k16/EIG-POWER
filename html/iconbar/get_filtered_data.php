@@ -45,15 +45,32 @@ if (isset($_GET['startDate']) && isset($_GET['endDate']) && !empty($_GET['startD
     );
     generateCategoryCardnew("NUCLEAR", count($NuclearSubCategoryQueries), $NuclearSubCategoryQueries, "mdi mdi-radioactive text-danger ", $NuclearSubCategoryNames);
 
-    $ThermalSubCategoryQueries = array(
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG') AND Time BETWEEN '$startDate' AND '$endDate'",
-    "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG') AND Time BETWEEN '$startDate' AND '$endDate'"
+    // $ThermalSubCategoryQueries = array(
+    // "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG') AND Time BETWEEN '$startDate' AND '$endDate'",
+    // "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG') AND Time BETWEEN '$startDate' AND '$endDate'"
+    // );
+    // $ThermalSubCategoryNames = array(
+    // "Gencos",
+    // "IPPS"
+    // );
+    // generateCategoryCardnew("THERMAL", count($ThermalSubCategoryQueries), $ThermalSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalSubCategoryNames);
+
+    $ThermalNewSubCategoryQueries = array(
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG') AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL Gas' AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL Coal' AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL FO' AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL RLNG' AND Time BETWEEN '$startDate' AND '$endDate'"
     );
-    $ThermalSubCategoryNames = array(
-    "Gencos",
-    "IPPS"
+    $ThermalNewSubCategoryNames = array(
+        "Gencos",
+        "Gas",
+        "Coal",
+        "FO",
+        "RLNG",
     );
-    generateCategoryCardnew("THERMAL", count($ThermalSubCategoryQueries), $ThermalSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalSubCategoryNames);
+    generateCategoryCardnew("THERMAL", count($ThermalNewSubCategoryQueries), $ThermalNewSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalNewSubCategoryNames);
+
 
 
 
@@ -104,15 +121,32 @@ if (isset($_GET['startDate']) && isset($_GET['endDate']) && !empty($_GET['startD
     );
     generateCategoryCardnew("NUCLEAR", count($NuclearSubCategoryQueries), $NuclearSubCategoryQueries, "mdi mdi-radioactive text-danger ", $NuclearSubCategoryNames);
 
-    $ThermalSubCategoryQueries = array(
+    // $ThermalSubCategoryQueries = array(
+    //     "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG') AND Time BETWEEN '$startDate' AND '$endDate'",
+    //     "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG') AND Time BETWEEN '$startDate' AND '$endDate'"
+    // );
+    // $ThermalSubCategoryNames = array(
+    //     "Gencos",
+    //     "IPPS"
+    // );
+    // generateCategoryCardnew("THERMAL", count($ThermalSubCategoryQueries), $ThermalSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalSubCategoryNames);
+    
+    
+    $ThermalNewSubCategoryQueries = array(
         "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG') AND Time BETWEEN '$startDate' AND '$endDate'",
-        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel IN ('IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG') AND Time BETWEEN '$startDate' AND '$endDate'"
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL Gas' AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL Coal' AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL FO' AND Time BETWEEN '$startDate' AND '$endDate'",
+        "SELECT SUM(Energy_MWh) AS TotalEnergy FROM mw_new WHERE sub_categories_by_fuel = 'IPPS FOSSIL FUEL RLNG' AND Time BETWEEN '$startDate' AND '$endDate'"
     );
-    $ThermalSubCategoryNames = array(
+    $ThermalNewSubCategoryNames = array(
         "Gencos",
-        "IPPS"
+        "Gas",
+        "Coal",
+        "FO",
+        "RLNG",
     );
-    generateCategoryCardnew("THERMAL", count($ThermalSubCategoryQueries), $ThermalSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalSubCategoryNames);
+    generateCategoryCardnew("THERMAL II", count($ThermalNewSubCategoryQueries), $ThermalNewSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalNewSubCategoryNames);
 
 
 }

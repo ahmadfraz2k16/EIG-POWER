@@ -60,8 +60,24 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             <!-- Cards will be displayed here -->
         </div>
         <!-- Create a dropdown menu to select a date -->
-        <label for="dateSelector">Select a Date:</label>
-        <select id="dateSelector"></select>
+        <!-- <label for="dateSelector">Select a Date:</label>
+        <select id="dateSelector"></select> -->
+        <form method="post" action="">
+            <select name="selected_date" onchange="this.form.submit()">
+                <?php
+                // Call the getUniqueDates function to retrieve dates
+                $dates = getUniqueDates();
+
+                // Decode the JSON response
+                $dates = json_decode($dates);
+
+                // Loop through the dates and populate the dropdown options
+                foreach ($dates as $date) {
+                    echo "<option value=\"$date\">$date</option>";
+                }
+                ?>
+            </select>
+        </form>
         <!-- high chart should be displayed here -->
         <div id="container7" style="width:100%; height:400px;"></div>
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
@@ -192,12 +208,23 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 <?php
 // echo formatedGraphData();
-$startDate = '2022-03-05';
-$endDate = '2022-03-5';
-$jsonData = extractDataForGraph($startDate, $endDate);
-$array = json_decode($jsonData, true);
+// Check if a date is selected, and display the corresponding data
+if (isset($_POST['selected_date'])) {
+    $startDatee = $_POST['selected_date'];
+    $endDatee = $_POST['selected_date'];
+    $jsonData = extractDataForGraph($startDatee, $endDatee);
+    $array = json_decode($jsonData, true);
 
-$extractedDates = extractDates($array);
+    $extractedDates = extractDates($array);
+} else {
+    $startDatee = '2022-03-02';
+    $endDatee = '2022-03-2';
+    $jsonData = extractDataForGraph($startDatee, $endDatee);
+    $array = json_decode($jsonData, true);
+
+    $extractedDates = extractDates($array);
+}
+
 
 ?>
 
