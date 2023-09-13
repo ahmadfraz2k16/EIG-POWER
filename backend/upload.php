@@ -61,3 +61,8 @@ if (($handle = fopen($csvFilePath, "r")) !== false) {
 
 // Close the database connection
 $conn->close();
+// After successful data upload
+// header("Location: http://localhost/latest_dash/html/iconbar/filesuploader.php?success=1");
+// header("Location: http://localhost/latest_dash/html/iconbar/index.php", true, 301);
+// header("Location: http://localhost/latest_dash/html/iconbar/index.php");
+// exit();

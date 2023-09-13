@@ -238,8 +238,10 @@ function getColumnClass($categoryName)
         return "col-md-12 col-sm-12";
     } elseif ($categoryName == "RENEWABLE") {
         return "col-md-4 col-sm-12";
-    } else {
+    } elseif ($categoryName == "HYDRO") {
         return "col-md-6 col-sm-12";
+    } else {
+        return "col-md-4 col-sm-12";
     }
 }
 // generate cards of major category with their respective sub categories

@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
-$startDate = date_format(date_create(startDate()), "Y-m-d");
-$endDate = date_format(date_create(endDate()), "Y-m-d");
+// $startDate = date_format(date_create(startDate()), "Y-m-d");
+// $endDate = date_format(date_create(endDate()), "Y-m-d");
 ?>
 <?php include('include/header.php'); ?>
 <!-- ============================================================== -->
@@ -70,10 +70,27 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
                 </div>
             </div>
         </form>
-
+        <!-- button for uploading data to database -->
+        <a href="http://localhost/latest_dash/backend/upload.php" class="btn btn-success" id="upload-button-db" style="display: none;">Upload to Database</a>
     </div>
 
+    <!-- loaders and success messages start -->
+    <!-- Add a loading indicator for checking CSV file -->
+    <div id="checkingCSVLoader" style="display: none;">
+        WAIT !!! Data is preprocessing ... <div class="spinner-border" role="status"></div>
+    </div>
 
+    <!-- Add a message for when the CSV file is found -->
+    <div id="csvFileFoundMessage" style="display: none;">
+        Preprocessed CSV file found. You can upload data...
+    </div>
+
+    <!-- Add a message for when the upload is successful -->
+    <div id="uploadSuccessMessage" style="display: none;">
+        Data successfully uploaded to the database.
+    </div>
+
+    <!-- loaders and success messages end -->
     <!-- End Row -->
 
 
@@ -106,6 +123,90 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Get references to the loading indicator and message elements
+        const checkingCSVLoader = document.getElementById("checkingCSVLoader");
+        const csvFileFoundMessage = document.getElementById("csvFileFoundMessage");
+        const uploadSuccessMessage = document.getElementById("uploadSuccessMessage");
+        // Function to check for the presence of the CSV file
+        function checkForCSVFile() {
+            // Show the loading indicator
+            checkingCSVLoader.style.display = "block";
+            // Send an AJAX request to check if the file exists
+            fetch("check_for_csv_file.php")
+                .then(response => response.text())
+                .then(data => {
+                    if (data === 'true') {
+                        // The CSV file is found, hide the loading indicator and show the CSV file found message
+                        checkingCSVLoader.style.display = "none";
+                        csvFileFoundMessage.style.display = "block";
+                        // The CSV file is found, trigger the upload process
+                        uploadCSVFile();
+                    } else {
+                        // The file is not found, continue checking
+                        setTimeout(checkForCSVFile, 5000); // Poll every 5 seconds (adjust as needed)
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking for CSV file:", error);
+                    // Retry after an interval in case of an error
+                    setTimeout(checkForCSVFile, 5000); // Retry after 5 seconds (adjust as needed)
+                });
+        }
+
+        // Function to trigger the upload process
+        // Function to trigger the upload process
+        function uploadCSVFile() {
+            // Show a message indicating that data is being processed
+            // You can implement this using a loading indicator or a message on your page
+
+            // Assuming that the upload process in upload.php will handle the success message,
+            // no need to display a success message here.
+            // You can implement the success message in upload.php.
+
+            // // Redirect to upload.php
+            // window.location.href = "http://localhost/latest_dash/backend/upload.php";
+
+            // upload button will appear
+            // get the button element by its id
+            var button = document.getElementById("upload-button-db");
+            // change the display property to block or inline
+            button.style.display = "block";
+        }
+        // Check for the success parameter in the URL and display a success message if it exists
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("success")) {
+            uploadSuccessMessage.style.display = "block";
+        }
+        // function uploadCSVFile() {
+        //     // Show a message indicating that data is being processed
+        //     // You can implement this using a loading indicator or a message on your page
+
+        //     // Send an AJAX request to trigger the upload process
+        //     fetch("C:/xampp/htdocs/latest_Dash/backend/upload.php")
+        //         .then(response => response.text())
+        //         .then(data => {
+        //             if (data === 'true') {
+        //                 // Show the upload success message
+        //                 uploadSuccessMessage.style.display = "block";
+        //                 // The upload process was successful
+        //                 // Show a message indicating successful upload
+
+        //                 // You can implement this using a success message on your page
+
+        //                 // Continue checking for new CSV files
+        //                 checkForCSVFile();
+        //             } else {
+        //                 // The upload process failed
+        //                 // Handle the error, you can show an error message
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error("Error uploading CSV file:", error);
+        //             // Retry after an interval in case of an error
+        //             setTimeout(uploadCSVFile, 5000); // Retry after 5 seconds (adjust as needed)
+        //         });
+        // }
+
         const folderInput = document.getElementById("folderInput");
         const fileInput = document.getElementById("fileInput");
         const uploadButton = document.getElementById("uploadButton");
@@ -132,6 +233,8 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             loadingIndicator.style.display = "block";
 
             processFiles(allFiles);
+            // Start checking for the CSV file when the page loads
+            checkForCSVFile();
         });
 
         fileInput.addEventListener("change", function() {
@@ -142,6 +245,8 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             }
 
             processFiles(files);
+            // Start checking for the CSV file when the page loads
+            checkForCSVFile();
         });
 
         function processFiles(files) {
@@ -163,7 +268,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
                         .then(response => response.text())
                         .then(data => {
                             console.log("Response from server:", data);
-                            
+
                             // Update the list of uploaded files
                             const listItem = document.createElement("li");
                             listItem.textContent = "File uploaded successfully: " + file.name;

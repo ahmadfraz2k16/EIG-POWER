@@ -1,5 +1,5 @@
 <?php
-$targetDirectory = "C:/Users/python/Documents/projR/phpUploads/"; // Specify the target directory for file uploads
+$targetDirectory = "C:/Users/python/Documents/projR/MAR-2022/"; // Specify the target directory for file uploads
 $allowedExtensions = ["xlsx", "xls", "xlsm"]; // Allowed file extensions
 $maxFileSize = 5 * 1024 * 1024; // 5MB (in bytes)
 
