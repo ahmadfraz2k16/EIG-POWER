@@ -670,6 +670,16 @@ function getUniqueDates()
     // Return dates as JSON
     return json_encode($dates);
 }
-
 // var_dump(getUniqueDates());
+function removeFiles()
+{
+    // Get all file names 
+    $filez = glob('C:/Users/python/Documents/projR/processed_mw_sheets/*');
 
+    // Loop through the file list 
+    foreach ($filez as $file) { // Check if file is a regular file and not a directory 
+        if (is_file($file))
+            // Delete file 
+            unlink($file);
+    } 
+}

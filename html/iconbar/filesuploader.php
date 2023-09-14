@@ -77,12 +77,12 @@ include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
     <!-- loaders and success messages start -->
     <!-- Add a loading indicator for checking CSV file -->
     <div id="checkingCSVLoader" style="display: none;">
-        WAIT !!! Data is preprocessing ... <div class="spinner-border" role="status"></div>
+        Cleaning and Preprocessing Data ... <div class="spinner-border" role="status"></div>
     </div>
 
     <!-- Add a message for when the CSV file is found -->
     <div id="csvFileFoundMessage" style="display: none;">
-        Preprocessed CSV file found. You can upload data...
+        Data is Preprocessed. You can upload data...
     </div>
 
     <!-- Add a message for when the upload is successful -->

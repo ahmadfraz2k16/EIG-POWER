@@ -1,4 +1,5 @@
 <?php
+include 'C:/xampp/htdocs/latest_Dash/backend/functions.php';
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -11,6 +12,11 @@ $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+// deleting existing records, before adding new records
+// write the query
+$sql = "TRUNCATE TABLE mw_new";
+// execute the query
+$conn->query($sql);
 
 $csvFilePath = "C:/Users/python/Documents/projR/processed_mw_sheets/collective_data.csv"; // Provide the actual path to your CSV file
 
@@ -61,8 +67,11 @@ if (($handle = fopen($csvFilePath, "r")) !== false) {
 
 // Close the database connection
 $conn->close();
+// deleting all files, which were uploaded
+removeFiles();
+sleep(5);
 // After successful data upload
 // header("Location: http://localhost/latest_dash/html/iconbar/filesuploader.php?success=1");
 // header("Location: http://localhost/latest_dash/html/iconbar/index.php", true, 301);
-// header("Location: http://localhost/latest_dash/html/iconbar/index.php");
-// exit();
+header("Location: http://localhost/latest_dash/html/iconbar/index.php");
+exit();
