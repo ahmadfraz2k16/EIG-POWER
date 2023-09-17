@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HTML 5 Boilerplate</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<!-- Custom CSS to style data labels -->
+<style>
+    .highcharts-data-label text {
+        fill: rgb(185, 122, 202) !important; /* Set text color to white */
+        text-decoration: none !important; /* Remove underline */
+    }
+</style>
+</head>
+
+<body>
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+    </figure>
+<!-- <script>
+    // Define initial categories (dates) for the x-axis
+        var initialCategories = ['2022-03-02'];
+
+    // Create the chart
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    inside: true,
+                    align: 'center',
+                    // style: {
+                    //     textDecoration: 'none', // Remove underline
+                    //     color: '#FFFFFF',
+                    //     fontSize: '12px',
+                    //     fontWeight: 'bold',
+                    // },
+                    formatter: function () {
+                        // Display the data label (plant name) for each point
+                        return this.point.name;
+                    }
+                }
+            }
+        },
+
+        series: [
+            {
+            name: "HYDRO",
+            color: '#89CFF0',
+            data: [{
+                name: "HYDRO",
+                y: 62.74,
+                color: '#89CFF0', // Custom color for HYDRO
+                drilldown: "HYDRO"
+            }
+            ]
+        },
+        {
+            name: "RENEWABLE",
+            color: '#90EE90',
+            data: [{
+                name: "RENEWABLE",
+                y: 15,
+                color: '#90EE90', // Custom color for RENEWABLE
+                drilldown: "RENEWABLE"
+            }
+            ], 
+        },
+        {
+            name: "NUCLEAR",
+            color: '#F88379',
+            data: [{
+                name: "NUCLEAR",
+                y: 15,
+                color: '#F88379', // Custom color for NUCLEAR
+                drilldown: null
+            }
+            ]
+        },
+        {
+            name: "THERMAL",
+            color: '#ffbc34',
+            data: [{
+                name: "THERMAL",
+                y: 37,
+                color: '#ffbc34', // Custom color for THERMAL
+                drilldown: "THERMAL"
+            }
+            ]
+        }
+        ],
+        drilldown: {
+            series: [
+                {
+                name: "HYDRO",
+                id: "HYDRO",
+                data: [
+                    {
+                        name:"PRIVATE",
+                        y:0.1
+                    },
+                    {
+                        name:"PUBLIC",
+                        y:1.3
+                    }
+                ]
+            },
+            {
+                name: "RENEWABLE",
+                id: "RENEWABLE",
+                data: [
+                    {
+                        
+                        name: "solar",
+                        y: 0.1
+                    },
+                    {
+                        name: "wind",
+                        y: 1.3
+                    },
+                    {
+                        name: "bagasse",
+                        y: 1.3
+                    }
+                ]
+            },
+            {
+                name: "THERMAL",
+                id: "THERMAL",
+                data: [
+                {
+                    name: "GENCOS",
+                    y: 15,
+                    drilldown: "GENCOS"
+                },
+                {
+                    name: "IPPS",
+                    y: 22,
+                    drilldown: "IPPS"
+                }
+            ]
+            },
+            {
+                id: "GENCOS",
+                data: [
+                    {
+                        name:"gencos gas",
+                        y:4,
+                    },
+                    {
+                        name: "gencos coal",
+                        y: 5,
+                    },
+                    {
+                        name: "gencos rlng",
+                        y: 6,
+                    }
+                ]
+            },
+            {
+                id: "IPPS",
+                data: [
+                    {
+                        name: "ipps gas",
+                        y: 4,
+                    },
+                    {
+                        name: "ipps coal",
+                        y: 5,
+                    },
+                    {
+                        name: "ipps fo",
+                        y: 6,
+                    },
+                    {
+                        name: "ipps rlng",
+                        y: 7,
+                    }
+                ]
+            }
+            ]
+        }
+    });
+
+    
+
+</script> -->
+
+<!-- as fun -->
+<script>
+    // Define initial categories (dates) for the x-axis
+    var initialCategories = ['2022-03-02'];
+
+    // Create the chart
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    inside: true,
+                    align: 'center', // Center the data label
+                    style: {
+                        fontSize: '12px', // Adjust font size if needed
+                        fontWeight: 'bold', // Adjust font weight if needed
+                    },
+                    formatter: function () {
+                        // Display the data label (plant name) for each point
+                        return this.point.name;
+                    }
+                }
+            }
+        },
+        xAxis: {
+
+            labels: {
+                enabled: false
+            }
+        },
+         yAxis: {
+            title: {
+                text: 'Energy (MW)' // Set your Y-axis label text here
+            }
+        },
+
+        series: [
+            {
+                name: "HYDRO",
+                color: '#89CFF0',
+                data: [
+                    {
+                        name: "HYDRO",
+                        y: 62.74,
+                        color: '#89CFF0', // Custom color for HYDRO
+                        drilldown: "HYDRO"
+                    }
+                ]
+            },
+            {
+                name: "RENEWABLE",
+                color: '#90EE90',
+                data: [
+                    {
+                        name: "RENEWABLE",
+                        y: 15,
+                        color: '#90EE90', // Custom color for RENEWABLE
+                        drilldown: "RENEWABLE"
+                    }
+                ]
+            },
+            {
+                name: "NUCLEAR",
+                color: '#F88379',
+                data: [
+                    {
+                        name: "NUCLEAR",
+                        y: 15,
+                        color: '#F88379', // Custom color for NUCLEAR
+                        drilldown: null
+                    }
+                ]
+            },
+            {
+                name: "THERMAL",
+                color: '#ffbc34',
+                data: [
+                    {
+                        name: "THERMAL",
+                        y: 37,
+                        color: '#ffbc34', // Custom color for THERMAL
+                        drilldown: "THERMAL"
+                    }
+                ]
+            }
+        ],
+        drilldown: {
+
+            series: [
+                {
+                    name: "HYDRO",
+                    id: "HYDRO",
+                    data: [
+                        {
+                            name: "PRIVATE",
+                            y: 0.1,
+                            xAxis: {
+                                categories: ["PRIVATE", "PUBLIC"] // Specify the labels for the X-axis
+                            }
+
+                        },
+                        {
+                            name: "PUBLIC",
+                            y: 1.3
+                        }
+                    ],
+
+
+                },
+
+                {
+                    name: "RENEWABLE",
+                    id: "RENEWABLE",
+                    data: [
+                        {
+                            name: "SOLAR",
+                            y: 0.1
+                        },
+                        {
+                            name: "WIND",
+                            y: 1.3
+                        },
+                        {
+                            name: "BAGASSE",
+                            y: 1.3
+                        }
+                    ]
+                },
+                {
+                    name: "THERMAL",
+                    id: "THERMAL",
+                    data: [
+                        {
+                            name: "GENCOS",
+                            y: 15,
+                            drilldown: "GENCOS"
+                        },
+                        {
+                            name: "IPPS",
+                            y: 22,
+                            drilldown: "IPPS"
+                        }
+                    ]
+                },
+                {
+                    id: "GENCOS",
+                    name: "GENCOS",
+                    data: [
+
+                        {
+                            name: "GENCOS GAS",
+                            y: 4,
+                        },
+                        {
+                            name: "GENCOS COAL",
+                            y: 5,
+                        },
+                        {
+                            name: "GENCOS RLNG",
+                            y: 6,
+                        }
+                    ],
+                },
+                {
+                    id: "IPPS",
+                    name: "IPPS",
+                    data: [
+                        {
+                            name: "IPPS GAS",
+                            y: 4,
+                        },
+                        {
+                            name: "IPPS COAL",
+                            y: 5,
+                        },
+                        {
+                            name: "IPPS FO",
+                            y: 6,
+                        },
+                        {
+                            name: "IPPS RLNG",
+                            y: 7,
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+</script>
+
+<!-- trying and testing -->
+
+
+
+<!-- <script>
+    $(function () {
+            Highcharts.setOptions({
+                lang: {
+                    drillUpText: 'Go back'
+                }
+            });
+            // Create the chart
+            $('#containerDummy').highcharts({
+                chart: {
+                    type: 'column'
+                },
+
+                xAxis: {
+                    // if you specify categories here xAxis will have these labels for every drilldown
+                    // instead you should specify name for each data point
+                    //	categories: ['Animals', 'Plants', 'People'],
+                    type: 'category'
+                },
+
+                legend: {
+                    enabled: false
+                },
+
+                series: [{
+                    name: 'London',
+                    data: [{
+                        name: 'Animals',
+                        y: 49.9,
+                        drilldown: 'london-animals'
+                    }]
+                }
+            ],
+
+                drilldown: {
+                    series: [
+                        {
+                        name: 'London animals',
+                        id: 'london-animals',
+                        data: [{
+                            name: 'Cats',
+                            y: 3,
+                            drilldown: 'london-animals-cats'
+                        }]
+                    },
+                    // this is 2nd level drilldown
+                    {
+                        name: 'London cats',
+                        id: 'london-animals-cats',
+                        data: [['white', 10], ['black', 20], ['grey', 15]]
+                    }]
+                }
+
+                /*
+                [{
+                    name: 'Animals',
+                    y: 5,
+                    drilldown: 'animals'
+                }]
+                */
+                /* drilldown: {
+                     series: [{
+                         id: 'animals',
+                         name: 'Animals',
+                         data: [{
+                             name: 'Cats',
+                             y: 4,
+                             drilldown: 'cats'
+                         }, ['Dogs', 2],
+                             ['Cows', 1],
+                             ['Sheep', 2],
+                             ['Pigs', 1]
+                         ]
+                     }, {
+            
+                         id: 'cats',
+                         data: [1, 2, 3]
+                     }]
+                 }
+                 */
+            });
+        });
+
+</script> -->
+</body>
+
+</html>

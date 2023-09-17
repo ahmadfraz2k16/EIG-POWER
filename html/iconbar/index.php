@@ -79,12 +79,15 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             </select>
         </form>
         <!-- high chart should be displayed here -->
-        <div id="container7" style="width:100%; height:400px;"></div>
+        <!-- <div id="container7" style="width:100%; height:400px;"></div> -->
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <div id="container_version_2" style="width:100%; height:400px;"></div>
+        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
+        <figure class="highcharts-figure">
+            <div id="container"></div>
+        </figure>
 
 
 
@@ -111,6 +114,401 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
 // include('include/customizer.php'); 
 ?>
 <?php include('include/footer.php'); ?>
+<!-- <script>
+    // Create the chart
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            align: 'left',
+            text: 'Power Plants generation shares. March, 2022'
+        },
+        subtitle: {
+            align: 'left',
+            text: 'Generation w.r.t Categories and Sub-categories'
+        },
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Total percent generation share'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}%'
+                },
+                drilldown: {
+                    enabled: true // Enable drilldown interactions
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        },
+        series: [{
+            name: 'POWER PLANTS',
+            colorByPoint: true,
+            data: [{
+                    name: 'HYDRO',
+                    y: 63.06,
+                    color: '#137eff', // Custom color for HYDRO
+                    drilldown: 'HYDRO'
+                },
+                {
+                    name: 'RENEWABLE',
+                    y: 19.84,
+                    color: '#5ac146', // Custom color for RENEWABLE
+                    drilldown: 'RENEWABLE'
+                },
+                {
+                    name: 'NUCLEAR',
+                    y: 4.18,
+                    color: '#fa5838', // Custom color for NUCLEAR
+                    drilldown: null
+                },
+                {
+                    name: 'THERMAL',
+                    y: 4.12,
+                    color: '#ffbc34', // Custom color for THERMAL
+                    drilldown: 'THERMAL'
+                }
+            ]
+        }],
+        drilldown: {
+            breadcrumbs: {
+                position: {
+                    align: 'right'
+                }
+            },
+            series: [{
+                    name: 'HYDRO',
+                    id: 'HYDRO',
+                    data: [
+                        ['PRIVATE', 30.0],
+                        ['PUBLIC', 33.06]
+                    ]
+                },
+                {
+                    name: 'RENEWABLE',
+                    id: 'RENEWABLE',
+                    data: [
+                        ['SOLAR', 10.0],
+                        ['WIND', 5.0],
+                        ['BAGASSE', 4.84]
+                    ]
+                },
+                {
+                    name: 'NUCLEAR',
+                    id: 'NUCLEAR',
+                    data: [
+                        // Add data for NUCLEAR subcategories
+                    ]
+                },
+                {
+                    name: 'THERMAL',
+                    id: 'THERMAL',
+                    data: [{
+                        name: 'IPPS',
+                        y: 2.0,
+                        drilldown: 'IPPS'
+                    }, {
+                        name: 'GENCOS',
+                        y: 2.12,
+                        drilldown: 'GENCOS'
+                    }]
+                },
+                {
+                    name: 'IPPS',
+                    id: 'IPPS',
+                    data: [
+                        ['IPPs Gas', 0.6],
+                        ['IPPs Coal', 0.8],
+                        ['IPPs FO', 0.1],
+                        ['IPPs RLNG', 0.62]
+                    ]
+                },
+                {
+                    name: 'GENCOS',
+                    id: 'GENCOS',
+                    data: [
+                        ['Gencos Gas', 1.0],
+                        ['Gencos Coal', 0.5],
+                        ['Gencos RLNG', 0.5]
+                    ]
+                }
+            ]
+        }
+    });
+</script> -->
+
+<!-- <script>
+    // Create the chart
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+                data: [{
+                        name: "HYDRO",
+                        y: 62.74,
+                        drilldown: "HYDRO"
+                    },
+                    {
+                        name: "HYDRO",
+                        y: 10.57,
+                        drilldown: "HYDRO"
+                    }
+                ]
+            },
+            {
+                data: [{
+                        name: "RENEWABLE",
+                        y: 15,
+                        drilldown: "RENEWABLE"
+                    },
+                    {
+                        name: "RENEWABLE",
+                        y: 23,
+                        drilldown: "RENEWABLE"
+                    }
+                ]
+            },
+            {
+                data: [{
+                        name: "NUCLEAR",
+                        y: 15,
+                        drilldown: "NUCLEAR"
+                    },
+                    {
+                        name: "NUCLEAR",
+                        y: 23,
+                        drilldown: "NUCLEAR"
+                    }
+                ]
+            },
+            {
+                data: [{
+                        name: "THERMAL",
+                        y: 15,
+                        drilldown: "THERMAL"
+                    },
+                    {
+                        name: "THERMAL",
+                        y: 23,
+                        drilldown: "THERMAL"
+                    }
+                ]
+            }
+        ],
+        drilldown: {
+            series: [{
+                id: "HYDRO",
+                data: [
+                    [
+                        "PRIVATE",
+                        0.1
+                    ],
+                    [
+                        "PUBLIC",
+                        1.3
+                    ]
+                ]
+            }, 
+            {
+                id: "RENEWABLE",
+                data: [
+                    [
+                        "SOLAR",
+                        23
+                    ],
+                    [
+                        "WIND",
+                        12
+                    ],
+                    [
+                        "BAGASSE",
+                        5
+                    ]
+                ]
+            },
+            {
+                id: "THERMAL",
+                data: [
+                    [
+                        "GENCOS",
+                        23
+                    ],
+                    [
+                        "IPPS",
+                        12
+                    ]
+                ]
+            }, 
+        ]
+        }
+    });
+</script> -->
+
+<script>
+    // Define initial categories (dates) for the x-axis
+    var initialCategories = ['2022-03-02'];
+
+    // Create the chart
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            type: 'datetime',
+            categories: initialCategories
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+                name: "HYDRO",
+                color: '#89CFF0',
+                data: [{
+                    name: "HYDRO",
+                    y: 62.74,
+                    color: '#89CFF0', // Custom color for HYDRO
+                    drilldown: "HYDRO"
+                }]
+            },
+            {
+                name: "RENEWABLE",
+                color: '#90EE90',
+                data: [{
+                    name: "RENEWABLE",
+                    y: 15,
+                    color: '#90EE90', // Custom color for RENEWABLE
+                    drilldown: "RENEWABLE"
+                }]
+            },
+            {
+                name: "NUCLEAR",
+                color: '#F88379',
+                data: [{
+                    name: "NUCLEAR",
+                    y: 15,
+                    color: '#F88379', // Custom color for NUCLEAR
+                    drilldown: null
+                }]
+            },
+            {
+                name: "THERMAL",
+                color: '#ffbc34',
+                data: [{
+                    name: "THERMAL",
+                    y: 15,
+                    color: '#ffbc34', // Custom color for THERMAL
+                    drilldown: "THERMAL"
+                }]
+            }
+        ],
+        drilldown: {
+            series: [{
+                    name: "HYDRO",
+                    id: "HYDRO",
+                    data: [
+                        [
+                            "PRIVATE",
+                            0.1
+                        ],
+                        [
+                            "PUBLIC",
+                            1.3
+                        ]
+                    ]
+                },
+                {
+                    name: "RENEWABLE",
+                    id: "RENEWABLE",
+                    data: [
+                        [
+                            "SOLAR",
+                            23
+                        ],
+                        [
+                            "WIND",
+                            12
+                        ],
+                        [
+                            "BAGASSE",
+                            5
+                        ]
+                    ]
+                },
+                {
+                    name: "THERMAL",
+                    id: "THERMAL",
+                    data: [{
+                            name: "GENCOS",
+                            y: 23,
+                            drilldown: "GENCOS"
+                        },
+                        {
+                            name: "IPPS",
+                            y: 12,
+                            drilldown: "IPPS"
+                        }
+                    ]
+                },
+                {
+                    id: "GENCOS",
+                    data: [
+                        ['Gencos Gas', 1.0],
+                        ['Gencos Coal', 0.5],
+                        ['Gencos RLNG', 0.5]
+                    ]
+                },
+                {
+                    id: "IPPS",
+                    data: [
+                        ['IPPs Gas', 0.6],
+                        ['IPPs Coal', 0.8],
+                        ['IPPs FO', 0.1],
+                        ['IPPs RLNG', 0.62]
+                    ]
+                }
+            ]
+        }
+    });
+</script>
+
+
+
+
+
+
+
 
 <script>
     // Parse the JSON string containing dates
