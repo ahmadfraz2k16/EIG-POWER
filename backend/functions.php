@@ -295,6 +295,96 @@ function generateCategoryCardnew($categoryName, $numSubCategories, $subCategoryQ
     </div>
 </div>';
 }
+// Thermal category card only
+function generateThermalCategoryCard($categoryName, $numSubCategories, $subCategoryQueries, $iconClass, $SubCategoryNames)
+{
+    if ($categoryName == "THERMAL") {
+        $conn = getDatabaseConnection();
+        $totalEnergy = 0;
+
+        // Mapping of category names to their corresponding classes
+        $categoryClasses = array(
+            "HYDRO" => "text-info",
+            "RENEWABLE" => "text-success",
+            "NUCLEAR" => "text-danger",
+            "THERMAL" => "text-warning"
+        );
+        for ($i = 0; $i < $numSubCategories; $i++) {
+            $sql = $subCategoryQueries[$i];
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+            $subCategoryEnergy = $row["TotalEnergy"];
+            $totalEnergy += (int) $subCategoryEnergy;
+        }
+
+        echo '<div class="card">
+            <div class="card-body text-center">
+                <h4 class="text-center text-warning">THERMAL</h4>
+                <h2>' . $totalEnergy . '</h2>
+                <div class="row p-t-10 p-b-10">
+                    <div class="col text-center align-self-center">
+                        <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20">
+                            <i class="display-6 mdi mdi-fire text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tabs for thermal only start -->
+                <!-- Tabs navs -->
+                <div class="container d-flex justify-content-center">
+                    <ul class="nav nav-tabs" id="ex1" role="tablist">
+                        <li class="nav-item flex-fill">
+                            <button class="nav-link active" id="gen-tab" data-bs-toggle="tab" data-bs-target="#gen-tab-pane" type="button" role="tab" aria-controls="gen-tab-pane" aria-selected="true">GENCOS</button>
+                        </li>
+                        <li class="nav-item flex-fill">
+                            <button class="nav-link" id="ipps-tab" data-bs-toggle="tab" data-bs-target="#ipps-tab-pane" type="button" role="tab" aria-controls="ipps-tab-pane" aria-selected="false">IPPS</button>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Tabs navs -->
+
+                <!-- Tabs content -->
+                <div class="tab-content" id="ex1-content">
+                    <div class="tab-pane fade show active" id="gen-tab-pane" role="tabpanel" aria-labelledby="gen-tab">
+                        <div class="row">';
+
+        // Customize the sub-category data for the "THERMAL" card
+        for ($i = 0; $i < 3; $i++) {
+            $sql = $subCategoryQueries[$i];
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+            $subCategoryEnergy = (int) $row["TotalEnergy"];
+            $totalEnergy += $subCategoryEnergy;
+
+            echo '<div class="col-md-4 col-sm-12 col-sm-12">
+                    <h4 class="font-medium m-b-0"><span class="text-warning">' . $SubCategoryNames[$i] . '</span><br>' . $subCategoryEnergy . '</h4>
+                </div>';
+        }
+
+        echo '</div></div>
+                <div class="tab-pane fade" id="ipps-tab-pane" role="tabpanel" aria-labelledby="ipps-tab">
+                    <div class="row">';
+
+        // Customize the sub-category data for the "THERMAL" card
+        for ($i = 3; $i < 7; $i++) {
+            $sql = $subCategoryQueries[$i];
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+            $subCategoryEnergy = (int) $row["TotalEnergy"];
+            $totalEnergy += $subCategoryEnergy;
+
+            echo '<div class="col-md-3 col-sm-12 col-sm-12">
+                    <h4 class="font-medium m-b-0"><span class="text-warning">' . $SubCategoryNames[$i] . '</span><br>' . $subCategoryEnergy . '</h4>
+                </div>';
+        }
+
+        echo '</div></div></div>
+                <!-- Tabs content -->
+                <!-- tabs for thermal only end -->
+            </div>
+        </div>';
+    }
+}
+
 // function for lowest date
 function startDate(){
     $conn = getDatabaseConnection();

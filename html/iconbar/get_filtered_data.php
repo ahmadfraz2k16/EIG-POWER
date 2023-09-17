@@ -73,7 +73,8 @@ if (isset($_GET['startDate']) && isset($_GET['endDate']) && !empty($_GET['startD
         "FO",
         "RLNG",
     );
-    generateCategoryCardnew("THERMAL", count($ThermalNewSubCategoryQueries), $ThermalNewSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalNewSubCategoryNames);
+    // generateCategoryCardnew("THERMAL", count($ThermalNewSubCategoryQueries), $ThermalNewSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalNewSubCategoryNames);
+    generateThermalCategoryCard("THERMAL", count($ThermalNewSubCategoryQueries), $ThermalNewSubCategoryQueries, "mdi mdi-fire text-warning ", $ThermalNewSubCategoryNames);
 
 
 
