@@ -79,15 +79,18 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             </select>
         </form>
         <!-- high chart should be displayed here -->
-        <!-- <div id="container7" style="width:100%; height:400px;"></div> -->
+        <div id="container7" style="width:100%; height:400px;"></div>
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
         <!-- high chart should be displayed here -->
         <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
-        <figure class="highcharts-figure">
+
+
+
+        <!-- <figure class="highcharts-figure">
             <div id="container"></div>
-        </figure>
+        </figure> -->
 
 
 
@@ -96,7 +99,184 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
+    <div class="container-fluid">
+        <!-- Row -->
+        <div class="row justify-content-between">
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-success"><i class="ti-wallet"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">17:15</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">290</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-info"><i class="ti-user"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">17:45</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">260</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-danger"><i class="ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">18:30</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">20</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-warning"><i class="ti-settings"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">18:45</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">640</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
 
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-success"><i class="ti-wallet"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">19:15</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">200</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-info"><i class="ti-user"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">19:45</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">260</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-info"><i class="ti-user"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">20:15</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">260</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-danger"><i class="ti-calendar"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">20:30</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">20</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-sm-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class="round align-self-center round-warning"><i class="ti-settings"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">name</h4>
+                                <!-- <span class="text-muted">20:45</span> -->
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">640</h2>
+                                <h5 class="font-medium m-b-0">datetime</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+        </div>
+        <!-- Row -->
+    </div>
 </div>
 <!-- ============================================================== -->
 <!-- End Page wrapper  -->
