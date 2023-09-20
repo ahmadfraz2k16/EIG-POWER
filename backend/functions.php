@@ -267,7 +267,7 @@ function generateCategoryCardnew($categoryName, $numSubCategories, $subCategoryQ
     echo '<div class="card ' . ($categoryName != "THERMAL" ? 'mr-3' : '') . '">
         <div class="card-body text-center">
             <h4 class="text-center ' . $categoryClasses[$categoryName] . '">' . $categoryName . '</h4>
-            <h2>' . $totalEnergy . '</h2>
+            <h2>' . $totalEnergy . '<br><span class="lead h6">MWh</span></h2>
         <div class="row p-t-10 p-b-10">
             <div class="col text-center align-self-center">
                 <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20"><i class="display-6 ' . $iconClass . '"></i></div>
@@ -320,7 +320,7 @@ function generateThermalCategoryCard($categoryName, $numSubCategories, $subCateg
         echo '<div class="card">
             <div class="card-body text-center">
                 <h4 class="text-center text-warning">THERMAL</h4>
-                <h2>' . $totalEnergy . '</h2>
+                <h2>' . $totalEnergy . '<br><span class="lead h6">MWh</span></h2>
                 <div class="row p-t-10 p-b-10">
                     <div class="col text-center align-self-center">
                         <div data-label="20%" class="css-bar m-b-0 css-bar-primary css-bar-20">

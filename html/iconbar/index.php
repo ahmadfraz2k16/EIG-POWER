@@ -121,7 +121,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
+        <div id="container_version_2" style="width:100%; height:400px;"></div>
         <!-- End Row -->
 
 
@@ -138,6 +138,8 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
     <div class="container-fluid">
+        <h3 style="font-size: 1.2em; color: rgb(51, 51, 51); font-weight: bold; fill: rgb(51, 51, 51);">Peak Contribution By Individual Powerplant</h3>
+
         <!-- Row -->
         <label for="dateSelect">Select Date:</label>
         <select id="dateSelect">
@@ -592,9 +594,9 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
     <?php
     // Fetch data from your database and prepare it for use
     $connection = new mysqli("localhost", "root", "", "power");
-    $startDate = "2022-03-02";
-    $endDate = "2022-03-21";
-    $query = "SELECT * FROM mw_new WHERE Time BETWEEN '$startDate' AND '$endDate'";
+    $startDateee = "2022-03-02";
+    $endDateee = "2022-03-21";
+    $query = "SELECT * FROM mw_new WHERE Time BETWEEN '$startDateee' AND '$endDateee'";
 
     $result = $connection->query($query);
 
@@ -1133,12 +1135,12 @@ if (isset($_POST['selected_date'])) {
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex flex-row">
-                                    <div class="round align-self-center round-warning"><i class="ti-bolt"></i></div>
+                                    <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
                                     <div class="m-l-10 align-self-center">
                                         <h4 class="m-b-0">${record[0]}</h4>
                                     </div>
                                     <div class="ml-auto align-self-center">
-                                        <h2 class="font-medium m-b-0">${record[2]}</h2>
+                                        <h2 class="font-medium m-b-0">${record[2]} <span class="lead h6">MWh</span></h2>
                                         <h5 class="font-medium m-b-0">${record[3]}</h5>
                                     </div>
                                 </div>
