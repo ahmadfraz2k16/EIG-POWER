@@ -1083,35 +1083,90 @@ if (isset($_POST['selected_date'])) {
 </script>
 
 <!-- JavaScript code to display records in cards -->
+// JavaScript code to display records in cards
 <script>
     // Get references to the dropdowns and card container
     var dateSelect = document.getElementById('dateSelect');
     var nameSelect = document.getElementById('nameSelect');
     var cardContainer = document.getElementById('cardContainer');
 
-    // Event listener for date selection
-    dateSelect.addEventListener('change', function() {
-        // Clear previous options and cards
+    // Function to populate the name dropdown based on the selected date
+    function populateNameDropdown(selectedDate) {
+        // Clear previous options
         nameSelect.innerHTML = '<option value="">Select a Name</option>';
+
+        // Populate the name dropdown with names for the selected date
+        if (selectedDate in names) {
+            names[selectedDate].forEach(function(name) {
+                var option = document.createElement('option');
+                option.value = name;
+                option.text = name;
+                nameSelect.appendChild(option);
+            });
+            nameSelect.removeAttribute('disabled');
+        }
+    }
+
+    // Function to display cards for a selected date and name
+    function displayCards(selectedDate, selectedName) {
+        // Clear previous cards
         cardContainer.innerHTML = '';
 
+        // Display the cards with records for the selected date and name
+        if (selectedDate in records && selectedName in records[selectedDate]) {
+            var selectedRecords = records[selectedDate][selectedName];
+            selectedRecords.forEach(function(record) {
+                var cardDiv = document.createElement('div');
+                cardDiv.className = 'col-sm-12 col-md-4';
+                cardDiv.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-row">
+                                <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                <div class="m-l-10 align-self-center">
+                                    <h4 class="m-b-0">${record[0]}</h4>
+                                </div>
+                                <div class="ml-auto align-self-center">
+                                    <h2 class="font-medium m-b-0">${record[2]} <span class="lead h6">MWh</span></h2>
+                                    <h5 class="font-medium m-b-0">${record[3]}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cardContainer.appendChild(cardDiv);
+            });
+        }
+    }
+
+    // PHP variables converted to JavaScript objects
+    var names = <?php echo json_encode($names); ?>;
+    var records = <?php echo json_encode($records); ?>;
+
+    // Populate the name dropdown with the default selected date and select the first date
+    var defaultSelectedDate = dateSelect.options[1].value; // Assuming the first date is at index 1
+    var defaultSelectedName = names[defaultSelectedDate][0]; // Assuming the first name for the first date is at index 0
+    populateNameDropdown(defaultSelectedDate);
+    dateSelect.value = defaultSelectedDate;
+
+    // Display cards for the default selected date and name
+    displayCards(defaultSelectedDate, defaultSelectedName);
+
+    // Event listener for date selection
+    dateSelect.addEventListener('change', function() {
         // Get the selected date
         var selectedDate = dateSelect.value;
 
-        // Populate the name dropdown with names for the selected date
-        <?php foreach ($dates as $date) : ?>
-            <?php if (isset($names[$date])) : ?>
-                if (selectedDate === '<?php echo $date; ?>') {
-                    <?php foreach ($names[$date] as $name) : ?>
-                        var option = document.createElement('option');
-                        option.value = '<?php echo $name; ?>';
-                        option.text = '<?php echo $name; ?>';
-                        nameSelect.appendChild(option);
-                    <?php endforeach; ?>
-                    nameSelect.removeAttribute('disabled');
-                }
-            <?php endif; ?>
-        <?php endforeach; ?>
+        // Populate the name dropdown based on the selected date
+        populateNameDropdown(selectedDate);
+
+        // Select the first name for the selected date
+        if (selectedDate in names && names[selectedDate].length > 0) {
+            nameSelect.value = names[selectedDate][0];
+        }
+
+        // Display cards for the selected date and name
+        displayCards(selectedDate, nameSelect.value);
     });
 
     // Event listener for name selection
@@ -1120,39 +1175,11 @@ if (isset($_POST['selected_date'])) {
         var selectedDate = dateSelect.value;
         var selectedName = nameSelect.value;
 
-        // Clear previous cards
-        cardContainer.innerHTML = '';
-
-        // Display the cards with records for the selected date and name
-        <?php if (!empty($records)) : ?>
-            var records = <?php echo json_encode($records); ?>;
-            if (selectedDate in records && selectedName in records[selectedDate]) {
-                var selectedRecords = records[selectedDate][selectedName];
-                selectedRecords.forEach(function(record) {
-                    var cardDiv = document.createElement('div');
-                    cardDiv.className = 'col-sm-12 col-md-4';
-                    cardDiv.innerHTML = `
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-row">
-                                    <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                    <div class="m-l-10 align-self-center">
-                                        <h4 class="m-b-0">${record[0]}</h4>
-                                    </div>
-                                    <div class="ml-auto align-self-center">
-                                        <h2 class="font-medium m-b-0">${record[2]} <span class="lead h6">MWh</span></h2>
-                                        <h5 class="font-medium m-b-0">${record[3]}</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    cardContainer.appendChild(cardDiv);
-                });
-            }
-        <?php endif; ?>
+        // Display cards for the selected date and name
+        displayCards(selectedDate, selectedName);
     });
 </script>
+
 </body>
 
 </html>
