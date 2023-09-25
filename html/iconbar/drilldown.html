@@ -12,6 +12,7 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    
 <!-- Custom CSS to style data labels -->
 <style>
     .highcharts-data-label text {
@@ -25,6 +26,599 @@
     <figure class="highcharts-figure">
         <div id="container"></div>
     </figure>
+    <figure class="highcharts-figure">
+        <div id="container1"></div>
+    </figure>
+    <figure class="highcharts-figure">
+        <div id="container2"></div>
+    </figure>
+    
+    <script>
+        Highcharts.chart('container2', {
+                chart: {
+                    type: 'areaspline'
+                },
+                title: {
+                    text: 'Energy Production for a Specific Date',
+                    align: 'left'
+                },
+                xAxis: [{
+                visible: true, // Show the x-axis
+                type: 'datetime', // Use datetime type for x values
+                // tickInterval: 15, // Set tick interval to 15 minutes
+                tickInterval: 15 * 60 * 1000, // Set tick interval to 15 minutes
+                dateTimeLabelFormats: {
+                        hour: '%H:%M', // Format for hours and minutes
+                        day: '%Y-%m-%d' // Format for days
+                    },
+                    title: {
+                        text: '2023-08-24'
+                    },
+                labels: {
+                    formatter: function () {
+                        // Custom formatter to display time as HH:MM
+                        const date = new Date(this.value);
+                        const hours = date.getUTCHours().toString().padStart(2, '0');
+                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        return hours + ':' + minutes;
+                    }
+                }
+            }],
+                yAxis: {
+                    title: {
+                        text: 'Energy Production (Megawatt)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>Time: {point.x:%H:%M}</b><br>',
+                    pointFormat: 'Energy Production: {point.y} MW'
+                },
+                plotOptions: {
+                    areaspline: {
+                        fillOpacity: 0.5,
+                        lineWidth: 2,
+                        lineColor: 'rgba(68, 170, 213, .2)'
+                    }
+                },
+            series: [{
+                name: 'Energy Production',
+                data: [
+                    { x: Date.UTC(2023, 8, 24, 0, 0), y: 100 }, // Replace with your data for each hour
+                    { x: Date.UTC(2023, 8, 24, 1, 0), y: 150 },
+                    { x: Date.UTC(2023, 8, 24, 2, 0), y: 200 },
+                    { x: Date.UTC(2023, 8, 24, 3, 0), y: 250 },
+                    { x: Date.UTC(2023, 8, 24, 4, 0), y: 300 },
+                    { x: Date.UTC(2023, 8, 24, 5, 0), y: 350 },
+                    { x: Date.UTC(2023, 8, 24, 6, 0), y: 400 },
+                    { x: Date.UTC(2023, 8, 24, 7, 0), y: 450 },
+                    { x: Date.UTC(2023, 8, 24, 8, 0), y: 500 },
+                    { x: Date.UTC(2023, 8, 24, 9, 0), y: 550 },
+                    { x: Date.UTC(2023, 8, 24, 10, 0), y: 600 },
+                    { x: Date.UTC(2023, 8, 24, 11, 0), y: 650 },
+                    { x: Date.UTC(2023, 8, 24, 12, 0), y: 700 },
+                    { x: Date.UTC(2023, 8, 24, 13, 0), y: 750 },
+                    { x: Date.UTC(2023, 8, 24, 14, 0), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 15, 0), y: 800 },
+
+                    // peak points in 24 hours, with 15 minute interval
+                    { x: Date.UTC(2023, 8, 24, 15, 15), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 15, 30), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 15, 45), y: 800 },
+                    // end of peak points
+
+                    { x: Date.UTC(2023, 8, 24, 16, 0), y: 800 },
+
+                    // peak points in 24 hours, with 15 minute interval
+                    { x: Date.UTC(2023, 8, 24, 16, 15), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 16, 30), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 16, 45), y: 800 },
+                    // end of peak points
+
+                    { x: Date.UTC(2023, 8, 24, 17, 0), y: 800 },
+
+                    // peak points in 24 hours, with 15 minute interval
+                    { x: Date.UTC(2023, 8, 24, 17, 15), y: 850 },
+                    { x: Date.UTC(2023, 8, 24, 17, 30), y: 900 },
+                    { x: Date.UTC(2023, 8, 24, 17, 45), y: 950 },
+                    // end of peak points
+
+                    { x: Date.UTC(2023, 8, 24, 18, 0), y: 1000 },
+                    { x: Date.UTC(2023, 8, 24, 19, 0), y: 1050 },
+                    { x: Date.UTC(2023, 8, 24, 20, 0), y: 1100 },
+                    { x: Date.UTC(2023, 8, 24, 21, 0), y: 1200 },
+                    { x: Date.UTC(2023, 8, 24, 22, 0), y: 1300 },
+                    { x: Date.UTC(2023, 8, 24, 23, 0), y: 1300 }
+                ]
+            }, {
+                name: 'Peak Hours',
+                type: 'areaspline',
+                color: 'rgba(219, 112, 147, 0.8)',
+                fillColor: 'rgba(219, 112, 147, 0.8)',
+                marker: {
+                    enabled: true,
+                    fillColor: 'rgba(219, 112, 147, 1)',
+                    lineColor: 'rgba(219, 112, 147, 1)'
+                },
+                connectEnds: true,
+                data: [
+                    { x: Date.UTC(2023, 8, 24, 15, 15), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 15, 30), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 15, 45), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 16, 15), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 16, 30), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 16, 45), y: 800 },
+                    { x: Date.UTC(2023, 8, 24, 17, 15), y: 850 },
+                    { x: Date.UTC(2023, 8, 24, 17, 30), y: 900 },
+                    { x: Date.UTC(2023, 8, 24, 17, 45), y: 950 }
+                ]
+
+
+            }]
+        });
+    </script>
+
+    <!-- <script>
+        Highcharts.chart('container', {
+            chart: {
+                type: 'areaspline'
+            },
+            title: {
+                text: 'Energy Production for a Specific Date',
+                align: 'left'
+            },
+            xAxis: {
+                visible: false // Hide the x-axis
+            },
+            yAxis: {
+                title: {
+                    text: 'Energy Production (Megawatt)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<b>Time: {point.x:%H:%M}</b><br>',
+                pointFormat: 'Energy Production: {point.y} MW'
+            },
+            plotOptions: {
+                areaspline: {
+                    fillOpacity: 0, // Set fillOpacity to 0 for the entire series
+                    lineWidth: 2, // Add a border line to the peak hours area
+                    lineColor: 'rgba(68, 170, 213, .2)' // Border color for peak hours area
+                }
+            },
+            series: [{
+                name: 'Energy Production',
+                data: [
+                    100, 150, 200, 250, 300, 350, 400, 450, 500, // Replace with your data for each hour
+                    550, 600, 650, 700, 750, 800, 850, 900, 950, // Replace with your data for each hour
+                    1000, 1050, 1100, 1200, 1300, 1400, 1500, 1600, 1700, // Replace with your data for each hour
+                    1800, 1900, 1200, 1100, 1000, 850, // Replace with your data for each hour
+                ]
+            }, {
+                name: 'Peak Hours',
+                type: 'areaspline',
+                color: 'rgba(219, 112, 147, 0.8)', // Use a shade of pink or purple with higher opacity
+                fillColor: 'rgba(219, 112, 147, 0.8)', // Fill color for the peak hours area
+                marker: {
+                    enabled: true,
+                    fillColor: 'rgba(219, 112, 147, 1)', // Use a darker shade for data points
+                    lineColor: 'rgba(219, 112, 147, 1)'
+                },
+                connectEnds: true, // Connect the peak data points to the blue 24-hour data points
+                data: [
+                    { x: 15, y: 850 }, // Example peak hour data points; replace with your data
+                    { x: 16, y: 900 },
+                    { x: 17, y: 950 },
+                    { x: 18, y: 1000 },
+                    { x: 19, y: 1050 },
+                    { x: 20, y: 1100 },
+                    { x: 21, y: 1200 },
+                    { x: 22, y: 1300 },
+                    { x: 23, y: 1400 }
+                ]
+            }]
+        });
+    </script> -->
+
+    <!-- version2 -->
+<!-- <script type="text/javascript">
+    //resolved clickable x-axis issue using this line of code
+        Highcharts.Tick.prototype.drillable = Highcharts.noop;  
+        // Create the chart
+                Highcharts.chart('container', {
+                    chart: {
+                    type: 'column',
+                events: {
+                    drilldown: function (e) {
+                        if (!e.seriesOptions) {
+                            var chart = this,
+                drilldowns = {
+                    'Hydro': {
+                    name: 'Hyrdro',
+                color: '#3150b4',
+                data: [
+                ['Private', 2],
+                ['Public', 3]
+                ]
+                                    },
+                'Fruits': {
+                    name: 'Fruits',
+                color: '#3150b4',
+                data: [
+                ['Oranges', 3],
+                ['Bananas', 2]
+                ]
+                                    }
+                                },
+                drilldowns2 = {
+                    'Animals': {
+                    name: 'Animals',
+                color: '#50B432',
+                data: [
+                ['Public', 8],
+                ['Private', 7]
+                ]
+                                    },
+                'Fruits': {
+                    name: 'Fruits',
+                color: '#50B432',
+                data: [
+                {name: 'Oranges', y: 6, drilldown: false },
+                {name: 'Bananas', y: 1, drilldown: false }
+                ]
+                                    }
+                                },
+                series = drilldowns[e.point.name],
+                series2 = drilldowns2[e.point.name];
+                chart.addSingleSeriesAsDrilldown(e.point, series);
+                chart.addSingleSeriesAsDrilldown(e.point, series2);
+                chart.applyDrilldown();
+                        }
+                    }
+                }
+            },
+                title: {
+                    text: 'Async Drill Down with Stacked Column Chart'
+            },
+                xAxis: {
+                    type: 'category'
+            },
+                legend: {
+                    enabled: false
+            },
+                plotOptions: {
+                    column: {stacking: 'normal' },
+                series: {
+                    borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                style: {textShadow: false, fontSize: '1vw' }
+                    }
+                }
+            },
+                series: [{
+                    name: 'Hydro',
+                color: '#3150b4',
+                data: [{
+                    name: 'Animals',
+                y: 5,
+                drilldown: true
+                }, {
+                    name: 'Fruits',
+                y: 5,
+                drilldown: true
+                }]
+            }, {
+                    name: 'Renewable',
+                color: '#50B432',
+                data: [{
+                    name: 'Animals',
+                y: 15,
+                drilldown: true
+                }, {
+                    name: 'Fruits',
+                y: 7,
+                drilldown: true
+                }]
+            }, {
+                    name: 'Nuclear',
+                color: '#FF5733', // Add color for Nuclear
+                data: [{
+                    name: 'Animals',
+                y: 10,
+                drilldown: true
+                }, {
+                    name: 'Fruits',
+                y: 5,
+                drilldown: true
+                }]
+            }, {
+                    name: 'Thermal',
+                color: '#FFC300', // Add color for Thermal
+                data: [{
+                    name: 'Animals',
+                y: 8,
+                drilldown: true
+                }, {
+                    name: 'Fruits',
+                y: 3,
+                drilldown: true
+                }]
+            }],
+                drilldown: {
+                    series: []
+            }
+        });
+    </script> -->
+    <!-- version1 -->
+<!-- <script type="text/javascript">
+    //resolved clickable x-axis issue using this line of code
+        Highcharts.Tick.prototype.drillable = Highcharts.noop;
+        // Create the chart
+            Highcharts.chart('container1', {
+                    chart: {
+                        type: 'column',
+                        events: {
+                            drilldown: function (e) {
+                                if (!e.seriesOptions) {
+                                    var chart = this,
+                                        drilldowns = {
+                                            '2022-03-02': {
+                                                name: '2022-03-02',
+                                                color: '#89CFF0',
+                                                data: [
+                                                    ['Private', 2],
+                                                    ['Public', 3]
+                                                ]
+                                            },
+                                            '2022-03-03': {
+                                                name: '2022-03-03',
+                                                color: '#90EE90',
+                                                data: [
+                                                    ['Oranges', 3],
+                                                    ['Bananas', 2]
+                                                ]
+                                            }
+                                        },
+                                        drilldowns2 = {
+                                            '2022-03-02': {
+                                                name: '2022-03-02',
+                                                color: '#50B432',
+                                                data: [
+                                                    ['Public', 8],
+                                                    ['Private', 7]
+                                                ]
+                                            },
+                                            '2022-03-03': {
+                                                name: '2022-03-03',
+                                                color: '#50B432',
+                                                data: [
+                                                    { name: 'Oranges', y: 6, drilldown: false },
+                                                    { name: 'Bananas', y: 1, drilldown: false }
+                                                ]
+                                            }
+                                        },
+                                        series = drilldowns[e.point.name],
+                                        series2 = drilldowns2[e.point.name];
+                                    chart.addSingleSeriesAsDrilldown(e.point, series);
+                                    chart.addSingleSeriesAsDrilldown(e.point, series2);
+                                    chart.applyDrilldown();
+                                }
+                            }
+                        }
+                    },
+                    title: {
+                        text: 'Async Drill Down with Stacked Column Chart'
+                    },
+                    xAxis: {
+                        type: 'treegrid'
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        column: { stacking: 'normal' },
+                        series: {
+                            borderWidth: 0,
+                            dataLabels: {
+                                enabled: true,
+                                style: { textShadow: false, fontSize: '1vw' }
+                            }
+                        }
+                    },
+                    series: [{
+                    name: 'Hydro',
+                    color: '#89CFF0',
+                    data: [{
+                        name: '2022-03-02',
+                        y: 5,
+                        drilldown: true
+                    }, {
+                        name: '2022-03-03',
+                        y: 5,
+                        drilldown: true
+                    }]
+                }, {
+                    name: 'Renewable',
+                    color: '#90EE90',
+                    data: [{
+                        name: '2022-03-02',
+                        y: 15,
+                        drilldown: true
+                    }, {
+                        name: '2022-03-03',
+                        y: 7,
+                        drilldown: true
+                    }]
+                }, {
+                    name: 'Nuclear',
+                    color: '#F88379', // Add color for Nuclear
+                    data: [{
+                        name: '2022-03-02',
+                        y: 10,
+                        drilldown: true
+                    }, {
+                        name: '2022-03-03',
+                        y: 5,
+                        drilldown: true
+                    }]
+                }, {
+                    name: 'Thermal',
+                    color: '#ffbc34', // Add color for Thermal
+                    data: [{
+                        name: '2022-03-02',
+                        y: 8,
+                        drilldown: true
+                    }, {
+                        name: '2022-03-03',
+                        y: 3,
+                        drilldown: true
+                    }]
+                }],
+                    drilldown: {
+                        series: []
+                    }
+               });
+
+    </script> -->
+    <!-- line graph with shaded area under it -->
+<!-- <script>
+Highcharts.chart('container', {
+    chart: {
+        type: 'area'
+    },
+    title: {
+        text: 'Power Generation Over 24 Hours'
+    },
+    xAxis: {
+        type: 'datetime',
+        labels: {
+            format: '{value:%H:%M}' // Use {value:%H:%M} to display hours and minutes
+        },
+        tickInterval: 15 * 60 * 1000, // 15 minutes in milliseconds
+        min: Date.UTC(2023, 8, 21, 0, 0), // Set the start time (assuming September 21, 2023)
+        max: Date.UTC(2023, 8, 21, 23, 59), // Set the end time (assuming September 21, 2023)
+        title: {
+            text: 'Time'
+        },
+    },
+    yAxis: {
+        title: {
+            text: 'Power Generation'
+        }
+    },
+    plotOptions: {
+        area: {
+            fillOpacity: 0.5
+        }
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Power Generation',
+        data: [
+            [Date.UTC(2023, 8, 21, 0, 0), 13],
+            [Date.UTC(2023, 8, 21, 0, 15), null],
+            [Date.UTC(2023, 8, 21, 0, 30), 10],
+            [Date.UTC(2023, 8, 21, 0, 45), 10],
+            [Date.UTC(2023, 8, 21, 1, 0), 8],
+            [Date.UTC(2023, 8, 21, 1, 15), null],
+            [Date.UTC(2023, 8, 21, 1, 30), 8],
+            [Date.UTC(2023, 8, 21, 1, 45), 9],
+            [Date.UTC(2023, 8, 21, 2, 0), 11],
+            [Date.UTC(2023, 8, 21, 2, 15), null],
+            [Date.UTC(2023, 8, 21, 2, 30), 12],
+            [Date.UTC(2023, 8, 21, 2, 45), 13],
+            [Date.UTC(2023, 8, 21, 3, 0), 15],
+            [Date.UTC(2023, 8, 21, 3, 15), null],
+            [Date.UTC(2023, 8, 21, 3, 30), 14],
+            [Date.UTC(2023, 8, 21, 3, 45), 12],
+            [Date.UTC(2023, 8, 21, 4, 0), 11],
+            [Date.UTC(2023, 8, 21, 4, 15), null],
+            [Date.UTC(2023, 8, 21, 4, 30), 10],
+            [Date.UTC(2023, 8, 21, 4, 45), 9],
+            [Date.UTC(2023, 8, 21, 5, 0), 8],
+            [Date.UTC(2023, 8, 21, 5, 15), null],
+            [Date.UTC(2023, 8, 21, 5, 30), 7],
+            [Date.UTC(2023, 8, 21, 5, 45), 6],
+            [Date.UTC(2023, 8, 21, 6, 0), 5],
+            [Date.UTC(2023, 8, 21, 6, 15), null],
+            [Date.UTC(2023, 8, 21, 6, 30), 4],
+            [Date.UTC(2023, 8, 21, 6, 45), 3],
+            [Date.UTC(2023, 8, 21, 7, 0), 2],
+            [Date.UTC(2023, 8, 21, 7, 15), null],
+            [Date.UTC(2023, 8, 21, 7, 30), 1],
+            [Date.UTC(2023, 8, 21, 7, 45), 2],
+            [Date.UTC(2023, 8, 21, 8, 0), 3],
+            [Date.UTC(2023, 8, 21, 8, 15), null],
+            [Date.UTC(2023, 8, 21, 8, 30), 4],
+            [Date.UTC(2023, 8, 21, 8, 45), 5],
+            [Date.UTC(2023, 8, 21, 9, 0), 6],
+            [Date.UTC(2023, 8, 21, 9, 15), null],
+            [Date.UTC(2023, 8, 21, 9, 30), 7],
+            [Date.UTC(2023, 8, 21, 9, 45), 8],
+            [Date.UTC(2023, 8, 21, 10, 0), 9],
+            [Date.UTC(2023, 8, 21, 10, 15), null],
+            [Date.UTC(2023, 8, 21, 10, 30), 10],
+            [Date.UTC(2023, 8, 21, 10, 45), 11],
+            [Date.UTC(2023, 8, 21, 11, 0), 12],
+            [Date.UTC(2023, 8, 21, 11, 15), null],
+            [Date.UTC(2023, 8, 21, 11, 30), 13],
+            [Date.UTC(2023, 8, 21, 11, 45), 14],
+            [Date.UTC(2023, 8, 21, 12, 0), 15],
+            [Date.UTC(2023, 8, 21, 12, 15), null],
+            [Date.UTC(2023, 8, 21, 12, 30), 14],
+            [Date.UTC(2023, 8, 21, 12, 45), 12],
+            [Date.UTC(2023, 8, 21, 13, 0), 11],
+            [Date.UTC(2023, 8, 21, 13, 15), null],
+            [Date.UTC(2023, 8, 21, 13, 30), 10],
+            [Date.UTC(2023, 8, 21, 13, 45), 9],
+            [Date.UTC(2023, 8, 21, 14, 0), 8],
+            [Date.UTC(2023, 8, 21, 14, 15), null],
+            [Date.UTC(2023, 8, 21, 14, 30), 7],
+            [Date.UTC(2023, 8, 21, 14, 45), 6],
+            [Date.UTC(2023, 8, 21, 15, 0), 5],
+            [Date.UTC(2023, 8, 21, 15, 15), null],
+            [Date.UTC(2023, 8, 21, 15, 30), 4],
+            [Date.UTC(2023, 8, 21, 15, 45), 3],
+            [Date.UTC(2023, 8, 21, 16, 0), 2],
+            [Date.UTC(2023, 8, 21, 16, 15), null],
+            [Date.UTC(2023, 8, 21, 16, 30), 1],
+            [Date.UTC(2023, 8, 21, 16, 45), 2],
+            [Date.UTC(2023, 8, 21, 17, 0), 3],
+            [Date.UTC(2023, 8, 21, 17, 15), null],
+            [Date.UTC(2023, 8, 21, 17, 30), 4],
+            [Date.UTC(2023, 8, 21, 17, 45), 5],
+            [Date.UTC(2023, 8, 21, 18, 0), 6],
+            [Date.UTC(2023, 8, 21, 18, 15), null],
+            [Date.UTC(2023, 8, 21, 18, 30), 7],
+            [Date.UTC(2023, 8, 21, 18, 45), 8],
+            [Date.UTC(2023, 8, 21, 19, 0), 9],
+            [Date.UTC(2023, 8, 21, 19, 15), null],
+            [Date.UTC(2023, 8, 21, 19, 30), 10],
+            [Date.UTC(2023, 8, 21, 19, 45), 11],
+            [Date.UTC(2023, 8, 21, 20, 0), 12],
+            [Date.UTC(2023, 8, 21, 20, 15), null],
+            [Date.UTC(2023, 8, 21, 20, 30), 13],
+            [Date.UTC(2023, 8, 21, 20, 45), 14],
+            [Date.UTC(2023, 8, 21, 21, 0), 15],
+            [Date.UTC(2023, 8, 21, 21, 15), null],
+            [Date.UTC(2023, 8, 21, 21, 30), 14],
+            [Date.UTC(2023, 8, 21, 21, 45), 12],
+            [Date.UTC(2023, 8, 21, 22, 0), 11],
+            [Date.UTC(2023, 8, 21, 22, 15), null],
+            [Date.UTC(2023, 8, 21, 22, 30), 10],
+            [Date.UTC(2023, 8, 21, 22, 45), 9],
+            [Date.UTC(2023, 8, 21, 23, 0), 8],
+            [Date.UTC(2023, 8, 21, 23, 15), null],
+            [Date.UTC(2023, 8, 21, 23, 30), 7],
+            [Date.UTC(2023, 8, 21, 23, 45), 6],
+        ]
+    }]
+});
+
+
+</script> -->
 <!-- <script>
     // Define initial categories (dates) for the x-axis
         var initialCategories = ['2022-03-02'];
@@ -199,10 +793,11 @@
 </script> -->
 
 <!-- as fun -->
-<script>
+<!-- <script>
     // Define initial categories (dates) for the x-axis
-    var initialCategories = ['2022-03-02'];
-
+    var initialCategories = ['2022-03-02 01:00','2022-03-02 02:00',];
+    //resolved clickable x-axis issue using this line of code
+    Highcharts.Tick.prototype.drillable = Highcharts.noop;
     // Create the chart
     Highcharts.chart('container', {
         chart: {
@@ -227,9 +822,10 @@
             }
         },
         xAxis: {
-
+            type: 'datetime',
+            categories:initialCategories,
             labels: {
-                enabled: true
+                enabled: true,
             }
         },
          yAxis: {
@@ -239,7 +835,7 @@
         },
 
         series: [
-            {
+            {   
                 name: "HYDRO",
                 color: '#89CFF0',
                 data: [
@@ -390,96 +986,563 @@
             ]
         }
     });
-</script>
+</script> -->
 
 <!-- trying and testing -->
 
-
-
 <!-- <script>
-    $(function () {
-            Highcharts.setOptions({
-                lang: {
-                    drillUpText: 'Go back'
+    
+        // Create the chart
+        Highcharts.chart('container007', {
+            chart: {
+                type: 'column',
+                events: {
+                    drilldown: function (e) {
+                        this.xAxis[0].setTitle({ text: e.seriesOptions.customName })
+                    }, drillup: function (e) {
+                        this.xAxis[0].setTitle({ text: e.seriesOptions.customName })
+                    }, drillupall: function () {
+                        this.xAxis[0].setTitle({ text: 'TextTopLevel' })
+                    }
                 }
-            });
-            // Create the chart
-            $('#containerDummy').highcharts({
-                chart: {
-                    type: 'column'
-                },
-
-                xAxis: {
-                    // if you specify categories here xAxis will have these labels for every drilldown
-                    // instead you should specify name for each data point
-                    //	categories: ['Animals', 'Plants', 'People'],
-                    type: 'category'
-                },
-
-                legend: {
-                    enabled: false
-                },
-
-                series: [{
-                    name: 'London',
-                    data: [{
-                        name: 'Animals',
-                        y: 49.9,
-                        drilldown: 'london-animals'
-                    }]
+            },
+            title: {
+                text: 'Basic drilldown'
+            },
+            xAxis: {
+                type: 'category',
+                title: {
+                    text: 'Categories'
                 }
-            ],
+            },
 
-                drilldown: {
-                    series: [
-                        {
-                        name: 'London animals',
-                        id: 'london-animals',
-                        data: [{
-                            name: 'Cats',
-                            y: 3,
-                            drilldown: 'london-animals-cats'
-                        }]
-                    },
-                    // this is 2nd level drilldown
-                    {
-                        name: 'London cats',
-                        id: 'london-animals-cats',
-                        data: [['white', 10], ['black', 20], ['grey', 15]]
-                    }]
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        inside: true,
+                        align: 'center',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                        },
+                        formatter: function () {
+                            return this.point.name;
+                        }
+                    }
                 }
+            },
 
-                /*
-                [{
+            series: [{
+                name: 'Things',
+                colorByPoint: true,
+                data: [{
                     name: 'Animals',
                     y: 5,
                     drilldown: 'animals'
+                }, {
+                    name: 'Fruits',
+                    y: 2,
+                    drilldown: 'fruits'
+                }, {
+                    name: 'Cars',
+                    y: 4,
+                    drilldown: 'cars'
                 }]
-                */
-                /* drilldown: {
-                     series: [{
-                         id: 'animals',
-                         name: 'Animals',
-                         data: [{
-                             name: 'Cats',
-                             y: 4,
-                             drilldown: 'cats'
-                         }, ['Dogs', 2],
-                             ['Cows', 1],
-                             ['Sheep', 2],
-                             ['Pigs', 1]
-                         ]
-                     }, {
-            
-                         id: 'cats',
-                         data: [1, 2, 3]
-                     }]
-                 }
-                 */
-            });
+            }],
+            drilldown: {
+                series: [{
+                    id: 'animals',
+                    customName: 'test1',
+                    data: [
+                        ['Cats', 4],
+                        ['Dogs', 2],
+                        ['Cows', 1],
+                        ['Sheep', 2],
+                        ['Pigs', 1]
+                    ]
+                }, {
+                    id: 'fruits',
+                    customName: 'test2',
+                    data: [
+                        ['Apples', 4],
+                        ['Oranges', 2]
+                    ]
+                }, {
+                    id: 'cars',
+                    customName: 'test3',
+                    data: [
+                        ['Toyota', 4],
+                        ['Opel', 2],
+                        ['Volkswagen', 2]
+                    ]
+                }]
+            }
         });
-
 </script> -->
+<!-- <script>
+    // Define initial categories (dates) for the x-axis
+    var initialCategories = ['2022-03-02 01:00', '2022-03-02 02:00'];
+    //resolved clickable x-axis issue using this line of code
+    Highcharts.Tick.prototype.drillable = Highcharts.noop;
+    // Create the main chart with two stacked columns
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            events: {
+                drilldown: function (e) {
+                    this.xAxis[0].setTitle({ text: e.seriesOptions.customName })
+                }, drillup: function (e) {
+                    this.xAxis[0].setTitle({ text: e.seriesOptions.customName })
+                }, drillupall: function () {
+                    this.xAxis[0].setTitle({ text: 'TextTopLevel' })
+                }
+            }
+        },
+        plotOptions: {
+            series: {
+
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    inside: true,
+                    align: 'center',
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                    },
+                    formatter: function () {
+                        return this.point.name;
+                    }
+                }
+            }
+        }
+        // ,plotOptions: {
+        //     series: {
+                
+        //         stacking: 'normal',
+        //         dataLabels: {
+        //             enabled: true,
+        //             inside: true,
+        //             align: 'center',
+        //             style: {
+        //                 fontSize: '12px',
+        //                 fontWeight: 'bold',
+        //             },
+        //             formatter: function () {
+        //                 return this.point.name;
+        //             }
+        //         }
+        //     }
+        // }
+        ,
+        // xAxis: {
+        //     type: 'datetime',
+        //     categories: initialCategories,
+        //     // labels: {
+        //     //     enabled: true,
+        //     // }
+        // },
+        yAxis: {
+            title: {
+                text: 'Energy (MW)'
+            }
+        },
+
+        series: [
+            {
+                name: "HYDRO",
+                color: '#89CFF0',
+                data: [
+                    {
+                        name: "HYDRO",
+                        y: 62.74,
+                        color: '#89CFF0',
+                        drilldown: "HYDRO_1" // Unique drilldown ID for the first date
+                    }
+                ]
+            },
+            {
+                name: "RENEWABLE",
+                color: '#90EE90',
+                data: [
+                    {
+                        name: "RENEWABLE",
+                        y: 15,
+                        color: '#90EE90',
+                        drilldown: "RENEWABLE_1" // Unique drilldown ID for the first date
+                    }
+                ]
+            },
+            {
+                name: "NUCLEAR",
+                color: '#F88379',
+                data: [
+                    {
+                        name: "NUCLEAR",
+                        y: 15,
+                        color: '#F88379',
+                        drilldown: "NUCLEAR_1" // Unique drilldown ID for the first date
+                    }
+                    
+                ]
+            },
+            {
+                name: "THERMAL",
+                color: '#ffbc34',
+                data: [
+                    {
+                        name: "THERMAL",
+                        y: 37,
+                        color: '#ffbc34',
+                        drilldown: "THERMAL_1" // Unique drilldown ID for the first date
+                    }
+                ]
+            }
+        ],
+        // drilldown: {
+        //     series: [{
+        //         id: 'HYDRO_1',
+        //         customName: '2022-03-02 01:00',
+        //         data: [
+        //             ['Cats', 4],
+        //             ['Dogs', 2],
+        //             ['Cows', 1],
+        //             ['Sheep', 2],
+        //             ['Pigs', 1]
+        //         ]
+        //     }, {
+        //         id: 'RENEWABLE_1',
+        //         customName: '2022-03-02 01:00',
+        //         data: [
+        //             ['Apples', 4],
+        //             ['Oranges', 2]
+        //         ]
+        //     }, {
+        //         id: 'NUCLEAR_1',
+        //         customName: '2022-03-02 01:00',
+        //         data: [
+        //             ['Toyota', 4],
+        //             ['Opel', 2],
+        //             ['Volkswagen', 2]
+        //         ]
+        //     }]
+        // }
+
+        drilldown: {
+            series: [
+                {
+                    id: "HYDRO_1", // Unique drilldown ID for the first date
+                    name: "HYDRO",
+                    data: [
+                        {
+                            name: "PRIVATE",
+                            y: 0.1
+                        },
+                        {
+                            name: "PUBLIC",
+                            y: 1.3
+                        }
+                    ]
+                },
+                {
+                    id: "RENEWABLE_1", // Unique drilldown ID for the first date
+                    name: "RENEWABLE",
+                    data: [
+                        {
+                            name: "SOLAR",
+                            y: 0.1
+                        },
+                        {
+                            name: "WIND",
+                            y: 1.3
+                        },
+                        {
+                            name: "BAGASSE",
+                            y: 1.3
+                        }
+                    ]
+                },
+                
+                {
+                    id: "NUCLEAR_1", // Unique drilldown ID for the first date
+                    name: "NUCLEAR",
+                    data: [
+                        {
+                            name: "NUCLEAR",
+                            y: 20
+                        }
+                    ]
+                },
+                {
+                    id: "THERMAL_1", // Unique drilldown ID for the first date
+                    name: "THERMAL",
+                    data: [
+                        {
+                            name: "GENCOS",
+                            y: 15,
+                            drilldown: "GENCOS_1" // Unique drilldown ID for the first date
+                        },
+                        {
+                            name: "IPPS",
+                            y: 22,
+                            drilldown: "IPPS_1" // Unique drilldown ID for the first date
+                        }
+                    ]
+                },
+                {
+                    id: "GENCOS_1", // Unique drilldown ID for the first date
+                    name: "GENCOS",
+                    data: [
+                        {
+                            name: "GENCOS GAS",
+                            y: 4
+                        },
+                        {
+                            name: "GENCOS COAL",
+                            y: 5
+                        },
+                        {
+                            name: "GENCOS RLNG",
+                            y: 6
+                        }
+                    ]
+                },
+                {
+                    id: "IPPS_1", // Unique drilldown ID for the first date
+                    name: "IPPS",
+                    data: [
+                        {
+                            name: "IPPS GAS",
+                            y: 4
+                        },
+                        {
+                            name: "IPPS COAL",
+                            y: 5
+                        },
+                        {
+                            name: "IPPS FO",
+                            y: 6
+                        },
+                        {
+                            name: "IPPS RLNG",
+                            y: 7
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+</script>   -->
+
+
+<!-- <script>
+    // Define initial categories (dates) for the x-axis
+    var initialCategories = ['2022-03-02'];
+
+    // Create the main chart with two stacked columns
+    Highcharts.chart('container2', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    inside: true,
+                    align: 'center',
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                    },
+                    formatter: function () {
+                        return this.point.name;
+                    }
+                }
+            }
+        },
+        xAxis: {
+            type: 'datetime',
+            categories: initialCategories,
+            labels: {
+                enabled: true,
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Energy (MW)'
+            }
+        },
+        series: [
+            {
+                name: "HYDRO",
+                color: '#89CFF0',
+                data: [
+                    {
+                        name: "HYDRO",
+                        y: 62.74,
+                        color: '#89CFF0',
+                        drilldown: "HYDRO" // Drilldown ID for HYDRO
+                    }
+                ]
+            },
+            {
+                name: "RENEWABLE",
+                color: '#90EE90',
+                data: [
+                    {
+                        name: "RENEWABLE",
+                        y: 15,
+                        color: '#90EE90',
+                        drilldown: "RENEWABLE" // Drilldown ID for RENEWABLE
+                    }
+                ]
+            },
+            {
+                name: "NUCLEAR",
+                color: '#F88379',
+                data: [
+                    {
+                        name: "NUCLEAR",
+                        y: 15,
+                        color: '#F88379',
+                        drilldown: "NUCLEAR" // Drilldown ID for NUCLEAR
+                    }
+                ]
+            },
+            {
+                name: "THERMAL",
+                color: '#ffbc34',
+                data: [
+                    {
+                        name: "THERMAL",
+                        y: 37,
+                        color: '#ffbc34',
+                        drilldown: "THERMAL" // Drilldown ID for THERMAL
+                    }
+                ]
+            }
+        ],
+        drilldown: {
+            series: [
+                {
+                    id: "HYDRO", // Drilldown ID for HYDRO
+                    name: "HYDRO",
+                    data: [
+                        {
+                            name: "PRIVATE",
+                            y: 0.1
+                        },
+                        {
+                            name: "PUBLIC",
+                            y: 1.3
+                        }
+                    ]
+                },
+                {
+                    id: "RENEWABLE", // Drilldown ID for RENEWABLE
+                    name: "RENEWABLE",
+                    data: [
+                        {
+                            name: "SOLAR",
+                            y: 0.1
+                        },
+                        {
+                            name: "WIND",
+                            y: 1.3
+                        },
+                        {
+                            name: "BAGASSE",
+                            y: 1.3
+                        }
+                    ]
+                },
+                {
+                    id: "NUCLEAR", // Drilldown ID for NUCLEAR
+                    name: "NUCLEAR",
+                    data: [
+                        {
+                            name: "NUCLEAR",
+                            y: 20
+                        }
+                    ]
+                },
+                {
+                    id: "THERMAL", // Drilldown ID for THERMAL
+                    name: "THERMAL",
+                    data: [
+                        {
+                            name: "GENCOS",
+                            y: 15,
+                            drilldown: "GENCOS" // Drilldown ID for GENCOS
+                        },
+                        {
+                            name: "IPPS",
+                            y: 22,
+                            drilldown: "IPPS" // Drilldown ID for IPPS
+                        }
+                    ]
+                },
+                {
+                    id: "GENCOS", // Drilldown ID for GENCOS
+                    name: "GENCOS",
+                    data: [
+                        {
+                            name: "GENCOS GAS",
+                            y: 4
+                        },
+                        {
+                            name: "GENCOS COAL",
+                            y: 5
+                        },
+                        {
+                            name: "GENCOS RLNG",
+                            y: 6
+                        }
+                    ]
+                },
+                {
+                    id: "IPPS", // Drilldown ID for IPPS
+                    name: "IPPS",
+                    data: [
+                        {
+                            name: "IPPS GAS",
+                            y: 4
+                        },
+                        {
+                            name: "IPPS COAL",
+                            y: 5
+                        },
+                        {
+                            name: "IPPS FO",
+                            y: 6
+                        },
+                        {
+                            name: "IPPS RLNG",
+                            y: 7
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+</script> -->
+
+
+
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.js"
+    integrity="sha256-tA8y0XqiwnpwmOIl3SGAcFl2RvxHjA8qp0+1uCGmRmg=" crossorigin="anonymous"></script> -->
+    
 </body>
 
 </html>
