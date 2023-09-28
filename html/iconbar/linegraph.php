@@ -348,6 +348,7 @@
     // Extract the time part and store it in separate arrays
     $peakHoursTimes = [];
     $mwNewTimes = [];
+    $final_Xaxis_Times = [];
 
     foreach ($dataPoints as $dataPoint) {
         $peakHoursTimes[] = date('H:i', $dataPoint['x'] / 1000); // Extract time part and convert to HH:mm format
@@ -359,23 +360,27 @@
 
 
 
-    // // Iterate through the arrays and populate the 'x' key
-    // foreach ($peakHoursData['TARBELA_Peak_Hours'] as $index => &$dataPoint) {
-    //     $dataPoint['x'] = $peakHoursTimes[$index];
+    // // Iterate through the arrays and remove the 'x' key
+    // foreach ($peakHoursData['TARBELA_Peak_Hours'] as &$dataPoint) {
+    //     unset($dataPoint['x']);
     // }
 
-    // foreach ($peakHoursData['TARBELA_24_Hours'] as $index => &$dataPoint) {
-    //     $dataPoint['x'] = $mwNewTimes[$index];
+    // foreach ($peakHoursData['TARBELA_24_Hours'] as &$dataPoint) {
+    //     unset($dataPoint['x']);
     // }
 
-    // Iterate through the arrays and remove the 'x' key
-    foreach ($peakHoursData['TARBELA_Peak_Hours'] as &$dataPoint) {
-        unset($dataPoint['x']);
+
+    // Add the "x" key with corrected values, to TARBELA_Peak_Hours
+    foreach ($peakHoursData['TARBELA_Peak_Hours'] as $index => $dataPoint) {
+        $peakHoursData['TARBELA_Peak_Hours'][$index]['x'] = $peakHoursTimes[$index];
     }
 
-    foreach ($peakHoursData['TARBELA_24_Hours'] as &$dataPoint) {
-        unset($dataPoint['x']);
+    // Add the "x" key with corrected values, to TARBELA_24_Hours
+    foreach ($peakHoursData['TARBELA_24_Hours'] as $index => $dataPoint) {
+        $peakHoursData['TARBELA_24_Hours'][$index]['x'] = $mwNewTimes[$index];
     }
+
+
 
 
     // Convert peakHoursData into a JSON string for use in JavaScript
@@ -383,17 +388,76 @@
     $mwNewTimesJson = json_encode($mwNewTimes);
     // Convert peakHoursData into a JSON string for use in JavaScript
     $peakHoursDataJson = json_encode($peakHoursData);
-    var_dump($peakHoursData);
-    echo '<br>';
-    var_dump($peakHoursTimes);
-    echo '<br>';
-    var_dump($mwNewTimes);
+    // echo '<pre>';
+    // print_r($peakHoursData);
+    // echo '</pre>';
+    // var_dump($peakHoursData);
+    // echo '<br>';
+    // var_dump($peakHoursTimes);
+    // echo '<br>';
+    // var_dump($mwNewTimes);
+
+
+    // Initialize a new array to combine data
+    $combinedData = [];
+
+    // Iterate through TARBELA_Peak_Hours and combine data
+    foreach ($peakHoursData['TARBELA_Peak_Hours'] as $dataPoint) {
+        $combinedData[] = [
+            'y' => $dataPoint['y'],
+            'x' => $dataPoint['x'],
+        ];
+    }
+
+    // Iterate through TARBELA_24_Hours and combine data
+    foreach ($peakHoursData['TARBELA_24_Hours'] as $dataPoint) {
+        $combinedData[] = [
+            'y' => $dataPoint['y'],
+            'x' => $dataPoint['x'],
+        ];
+    }
+
+    // Create an associative array with the combined data
+    $combinedDataArray = [
+        'Combined_Data' => $combinedData,
+    ];
+
+    // // Convert the combined data into a JSON string for use in JavaScript
+    // $combinedDataJson = json_encode($combinedDataArray);
+
+    // Function to compare two data points based on 'x' (time)
+    function compareDataPoints($a, $b)
+    {
+        return strtotime($a['x']) - strtotime($b['x']);
+    }
+
+    // Sort the combined data array
+    usort($combinedDataArray['Combined_Data'], 'compareDataPoints');
+
+    foreach ($combinedDataArray['Combined_Data'] as $data) {
+        $final_Xaxis_Times[] = date('H:i', strtotime($data['x'])); // Convert 'x' to HH:mm format
+    }
+
+    // var_dump($final_Xaxis_Times);
+    $final_Xaxis_TimesJson = json_encode($final_Xaxis_Times);
+    //unset x keys from combined_Data
+    foreach ($combinedDataArray['Combined_Data'] as &$dataPoint) {
+        unset($dataPoint['x']);
+    }
+    // Convert the combined data into a JSON string for use in JavaScript
+    $combinedDataJson = json_encode($combinedDataArray);
+    // Print the combined data
+    echo '<pre>';
+    print_r($combinedDataArray);
+    echo '</pre>';
+
     ?>
 
 
     <script>
         var peakHoursTimes = <?php echo $peakHoursTimesJson; ?>;
         var mwNewTimes = <?php echo $mwNewTimesJson; ?>;
+        var final_Xaxis_Times = <?php echo $final_Xaxis_TimesJson; ?>;
         // Sample energy production data
         const energyData = [{
                 timestamp: Date.UTC(2023, 8, 24, 0, 0),
@@ -409,6 +473,7 @@
         const targetDateFormatted = '<?php echo date('Y-m-d', strtotime($targetDate)); ?>';
         // Include the peakHoursData in your Highcharts chart configuration
         var peakHoursData = <?php echo $peakHoursDataJson; ?>;
+        var combinedData = <?php echo $combinedDataJson; ?>;
         // // Sample peak hours data
         // const peakHoursData = [{
         //         timestamp: Date.UTC(2023, 8, 24, 15, 0), // Align with 15-minute interval
@@ -464,7 +529,8 @@
             // },
             xAxis: {
                 type: 'category', // Use category type for discrete time values
-                categories: <?php echo json_encode($mwNewTimes); ?>, // Use mwNewTimes for x-axis categories
+                // categories: <?php echo json_encode($mwNewTimes); ?>, // Use mwNewTimes for x-axis categories
+                categories: <?php echo json_encode($final_Xaxis_Times); ?>, // Use mwNewTimes for x-axis categories
                 title: {
                     text: targetDateFormatted,
                 },
@@ -486,15 +552,20 @@
                 },
             },
             series: [{
-                    name: 'TARBELA_Peak_Hours',
+                    name: '24_hours_with_Peak_Hours',
                     type: 'areaspline',
-                    data: peakHoursData['TARBELA_Peak_Hours'],
+                    data: combinedData['Combined_Data'],
                 },
-                {
-                    name: 'TARBELA_24_Hours',
-                    type: 'areaspline',
-                    data: peakHoursData['TARBELA_24_Hours'],
-                },
+                // {
+                //     name: 'TARBELA_Peak_Hours',
+                //     type: 'areaspline',
+                //     data: peakHoursData['TARBELA_Peak_Hours'],
+                // },
+                // {
+                //     name: 'TARBELA_24_Hours',
+                //     type: 'areaspline',
+                //     data: peakHoursData['TARBELA_24_Hours'],
+                // },
             ],
             // series: [
             //     // {
