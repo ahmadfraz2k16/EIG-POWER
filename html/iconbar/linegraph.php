@@ -448,7 +448,9 @@
     $combinedDataJson = json_encode($combinedDataArray);
     // Print the combined data
     echo '<pre>';
-    print_r($combinedDataArray);
+    // print_r($combinedDataArray);
+    print_r($peakHoursTimes);
+    print_r($final_Xaxis_TimesJson);
     echo '</pre>';
 
     ?>
@@ -456,39 +458,77 @@
 
     <script>
         var peakHoursTimes = <?php echo $peakHoursTimesJson; ?>;
+        console.log(peakHoursTimes);
         var mwNewTimes = <?php echo $mwNewTimesJson; ?>;
         var final_Xaxis_Times = <?php echo $final_Xaxis_TimesJson; ?>;
-        // Sample energy production data
-        const energyData = [{
-                timestamp: Date.UTC(2023, 8, 24, 0, 0),
-                value: 100,
-            },
-            {
-                timestamp: Date.UTC(2023, 8, 24, 1, 0),
-                value: 150,
-            },
-            // Add more data points here
-        ];
+        console.log(final_Xaxis_Times);
         // Get the target date in the 'YYYY-MM-DD' format
         const targetDateFormatted = '<?php echo date('Y-m-d', strtotime($targetDate)); ?>';
         // Include the peakHoursData in your Highcharts chart configuration
         var peakHoursData = <?php echo $peakHoursDataJson; ?>;
         var combinedData = <?php echo $combinedDataJson; ?>;
-        // // Sample peak hours data
-        // const peakHoursData = [{
-        //         timestamp: Date.UTC(2023, 8, 24, 15, 0), // Align with 15-minute interval
-        //         value: 800,
-        //     },
-        //     {
-        //         timestamp: Date.UTC(2023, 8, 24, 15, 15),
-        //         value: 800,
-        //     },
-        //     {
-        //         timestamp: Date.UTC(2023, 8, 24, 15, 30),
-        //         value: 800,
-        //     },
-        //     // Add more peak hours data points here
-        // ];
+
+        // // Create an array to hold the zones
+        // var zones = [];
+
+        // // Set the entire xAxis area to light blue
+        // zones.push({
+        //     color: 'rgba(173, 216, 230, 0.8)', // Light blue color with 80% opacity
+        //     colorIndex: 0, // Use a different color index for the red zone
+        // });
+
+        // // Add a light red zone with dashed style between the first and last peak hour
+        // zones.push({
+        //     color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
+        //     value: final_Xaxis_Times.indexOf(peakHoursTimes[0]), // Start from the first peak hour
+        //     dashStyle: 'Dash', // Dashed style
+        //     colorIndex: 1, // Use a different color index for the red zone
+        // });
+        // zones.push({
+        //     color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
+        //     value: final_Xaxis_Times.indexOf(peakHoursTimes[peakHoursTimes.length - 1]), // End at the last peak hour
+        //     dashStyle: 'Dash', // Dashed style
+        //     colorIndex: 1, // Use a different color index for the red zone
+        // });
+        // // Set the entire xAxis area to light blue
+        // zones.push({
+        //     color: 'rgba(173, 216, 230, 0.8)', // Light blue color with 80% opacity
+        //     colorIndex: 0, // Use a different color index for the red zone
+        // });
+
+        // Create an array to hold the zones
+        var zones = [];
+
+        // Find the start and end times for the red zone
+        var start = peakHoursTimes[0];
+        var end = peakHoursTimes[peakHoursTimes.length - 1];
+
+        // Find the corresponding indices in the final_Xaxis_Times array
+        var startIndex = final_Xaxis_Times.indexOf(start);
+        var endIndex = final_Xaxis_Times.indexOf(end);
+
+        // Create the zones array with colorIndex for consistent colors
+        zones.push({
+            fillColor: 'none', // Disable default fill color
+            lineColor: 'none', // Disable default line color
+        });
+        zones.push({
+            color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
+            value: startIndex, // Start from the first peak hour
+            dashStyle: 'Dash', // Dashed style
+        });
+        zones.push({
+            fillColor: 'rgba(255, 182, 193, 0.8)',
+            color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
+            value: endIndex, // End at the last peak hour
+            dashStyle: 'Dash', // Dashed style
+        });
+        zones.push({
+            value: final_Xaxis_Times.indexOf('23:00'), // End at 23:00
+            fillColor: 'none', // Disable default fill color
+            lineColor: 'none', // Disable default line color
+
+        });
 
         // Create a Highcharts chart using the data
         Highcharts.chart('container3', {
@@ -502,38 +542,13 @@
                 text: 'Energy Production for ' + targetDateFormatted,
                 align: 'left',
             },
-            // xAxis: {
-            //     type: 'datetime',
-            //     tickInterval: 15 * 60 * 1000,
-            //     dateTimeLabelFormats: {
-            //         hour: '%H:%M',
-            //         day: '%Y-%m-%d',
-            //     },
-            //     title: {
-            //         text: targetDateFormatted,
-            //     },
-            //     labels: {
-            //         formatter: function() {
-            //             const date = new Date(this.value);
-            //             const hours = date.getUTCHours().toString().padStart(2, '0');
-            //             const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-            //             return hours + ':' + minutes;
-            //         },
-            //     },
-            //     startOnTick: true, // Ensure that the axis starts on a tick
-            //     endOnTick: true, // Ensure that the axis ends on a tick
-            //     minPadding: 0, // Set minimum padding to 0
-            //     maxPadding: 0,
-            //     offset: 0,
-            //     timezoneOffset: -5 * 60, // Pakistan Standard Time (5 hours ahead of UTC)
-            // },
             xAxis: {
                 type: 'category', // Use category type for discrete time values
                 // categories: <?php echo json_encode($mwNewTimes); ?>, // Use mwNewTimes for x-axis categories
-                categories: <?php echo json_encode($final_Xaxis_Times); ?>, // Use mwNewTimes for x-axis categories
+                categories: <?php echo json_encode($final_Xaxis_Times); ?>, // Use final_Xaxis_Times for x-axis categories
                 title: {
                     text: targetDateFormatted,
-                },
+                }
             },
             yAxis: {
                 title: {
@@ -546,63 +561,19 @@
             },
             plotOptions: {
                 areaspline: {
-                    fillOpacity: 0.5,
+                    fillOpacity: 0.8,
                     lineWidth: 2,
-                    lineColor: 'rgba(68, 170, 213, .2)',
+                    // lineColor: 'rgba(95, 141, 237, 0.8)',
+                    fillColor: 'none', // Disable default fill color
                 },
             },
             series: [{
-                    name: '24_hours_with_Peak_Hours',
-                    type: 'areaspline',
-                    data: combinedData['Combined_Data'],
-                },
-                // {
-                //     name: 'TARBELA_Peak_Hours',
-                //     type: 'areaspline',
-                //     data: peakHoursData['TARBELA_Peak_Hours'],
-                // },
-                // {
-                //     name: 'TARBELA_24_Hours',
-                //     type: 'areaspline',
-                //     data: peakHoursData['TARBELA_24_Hours'],
-                // },
-            ],
-            // series: [
-            //     // {
-            //     //     name: 'Energy Production',
-            //     //     data: energyData.map((point) => ({
-            //     //         x: point.timestamp,
-            //     //         y: point.value,
-            //     //     })),
-            //     // },
-            //     <?php
-                    //     // Generate the peak hours series dynamically from PHP data
-                    //     foreach ($peakHoursData as $key => $data) {
-                    //         echo "{
-                    //             name: '$key',
-                    //             type: 'areaspline',
-                    //             data: " . json_encode($data) . ",
-                    //         },";
-                    //     }
-                    //     
-                    ?>
-            //     // {
-            //     //     name: 'Peak Hours',
-            //     //     type: 'areaspline',
-            //     //     color: 'rgba(219, 112, 147, 0.8)',
-            //     //     fillColor: 'rgba(219, 112, 147, 0.8)',
-            //     //     marker: {
-            //     //         enabled: true,
-            //     //         fillColor: 'rgba(219, 112, 147, 1)',
-            //     //         lineColor: 'rgba(219, 112, 147, 1)',
-            //     //     },
-            //     //     connectEnds: true,
-            //     //     data: peakHoursData.map((point) => ({
-            //     //         x: point.timestamp,
-            //     //         y: point.value,
-            //     //     })),
-            //     // },
-            // ],
+                name: '24_hours_with_Peak_Hours',
+                type: 'areaspline',
+                data: combinedData['Combined_Data'],
+                zoneAxis: 'x', // Set the zoneAxis to 'x'
+                zones: zones,
+            }, ],
         });
     </script>
 
