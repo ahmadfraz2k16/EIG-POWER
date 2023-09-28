@@ -32,7 +32,261 @@
     <figure class="highcharts-figure">
         <div id="container2"></div>
     </figure>
-    
+   <script>
+    Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+
+                events: {
+                    drilldown: function (e) {
+                        if (!e.seriesOptions) {
+
+                            var chart = this,
+                                Hydro = {
+                                    'Private': {
+                                        name: 'Private',
+                                        color: 'blue',
+                                        data: [
+                                            ['00:00', 2],
+                                            ['01:00', 6],
+                                            ['02:00', 1],
+                                            ['03:00', 2],
+                                            ['04:00', 3],
+
+                                        ]
+                                    },
+                                    'Public': {
+
+                                        name: 'Public',
+                                        color: 'red',
+                                        data: [
+                                            ['00:00', 5],
+                                            ['01:00', 5],
+                                            ['02:00', 5],
+                                            ['03:00', 5],
+                                            ['04:00', 5],
+                                        ]
+                                    }
+                                },
+
+                                Renewables = {
+
+                                    'Solar': {
+
+                                        name: 'Solar',
+                                        color: 'yellow',
+                                        data: [
+                                            ['00:00', 2],
+                                            ['01:00', 6],
+                                            ['02:00', 1],
+                                            ['03:00', 2],
+                                            ['04:00', 3],
+
+                                        ]
+                                    },
+                                    'Wind': {
+
+                                        name: 'Wind',
+                                        color: 'blue',
+                                        data: [
+                                            ['00:00', 5],
+                                            ['01:00', 5],
+                                            ['02:00', 5],
+                                            ['03:00', 5],
+                                            ['04:00', 5],
+                                        ]
+                                    }
+                                },
+                                Thermal = {
+
+                                    'IPPS': {
+
+                                        name: 'IPPS',
+                                        color: 'red',
+                                        data: [
+                                            ['00:00', 2],
+                                            ['01:00', 6],
+                                            ['02:00', 1],
+                                            ['03:00', 2],
+                                            ['04:00', 3],
+
+                                        ]
+                                    },
+                                    'GENCOS': {
+
+                                        name: 'GENCOS',
+                                        color: 'black',
+                                        data: [
+                                            ['00:00', 5],
+                                            ['01:00', 5],
+                                            ['02:00', 5],
+                                            ['03:00', 5],
+                                            ['04:00', 5],
+                                        ]
+                                    }
+                                },
+                                Nuclear = {
+
+                                    'Nuclear': {
+
+                                        name: 'Nuclear',
+                                        color: 'red',
+                                        data: [
+                                            ['00:00', 2],
+                                            ['01:00', 6],
+                                            ['02:00', 1],
+                                            ['03:00', 2],
+                                            ['04:00', 3],
+
+                                        ]
+                                    }
+                                };
+
+
+                            if (e.point.color == "blue") {
+                                chart.addSingleSeriesAsDrilldown(e.point, Hydro.Private);
+                                chart.addSingleSeriesAsDrilldown(e.point, Hydro.Public);
+                            }
+                            else if (e.point.color == "green") {
+                                chart.addSingleSeriesAsDrilldown(e.point, Renewables.Solar);
+                                chart.addSingleSeriesAsDrilldown(e.point, Renewables.Wind);
+                            }
+                            else if (e.point.color == "red") {
+                                chart.addSingleSeriesAsDrilldown(e.point, Thermal.IPPS);
+                                chart.addSingleSeriesAsDrilldown(e.point, Thermal.GENCOS);
+                            }
+                            else if (e.point.color == "yellow") {
+                                chart.addSingleSeriesAsDrilldown(e.point, Nuclear.Nuclear);
+
+                            }
+                            chart.applyDrilldown();
+
+                        }
+                    }
+                }
+            },
+            xAxis: {
+
+                type: 'category'
+                //  categories: ["03-03-2022", "04-03-2022", "05-03-2022", "06-03-2022"]
+            },
+            tooltip: {
+                enabled: true
+            },
+
+            plotOptions: {
+                series: {
+
+                    stacking: 'percent'
+                }
+            },
+
+            series: [{
+
+                id: 'g1',
+                color: 'blue',
+                name: "Hydro",
+                data: [{
+                    name: "03-03-2022",
+                    y: 1,
+                    drilldown: true
+                }, {
+                    name: "04-03-2022",
+                    y: 2,
+                    drilldown: true
+                }, {
+                    name: "05-03-2022",
+                    y: 3,
+                    drilldown: true
+                }, {
+                    name: "06-03-2022",
+                    y: 4,
+                    drilldown: true
+                }],
+                stack: "move",
+                drilldown: true
+            },
+
+            {
+                id: 'g2',
+                color: 'green',
+                name: "Renewables",
+                data: [{
+                    name: "03-03-2022",
+                    y: 1,
+                    drilldown: true
+                }, {
+                    name: "04-03-2022",
+                    y: 2,
+                    drilldown: true
+                }, {
+                    name: "05-03-2022",
+                    y: 3,
+                    drilldown: true
+                }, {
+                    name: "06-03-2022",
+                    y: 4,
+                    drilldown: true
+                }],
+                stack: "move",
+                drilldown: true
+            },
+
+            {
+                id: 'g3',
+                color: 'red',
+                name: "Thermal",
+                data: [{
+                    name: "03-03-2022",
+                    y: 1,
+                    drilldown: true
+                }, {
+                    name: "04-03-2022",
+                    y: 2,
+                    drilldown: true
+                }, {
+                    name: "05-03-2022",
+                    y: 3,
+                    drilldown: true
+                }, {
+                    name: "06-03-2022",
+                    y: 4,
+                    drilldown: true
+                }],
+                stack: "move",
+                drilldown: true
+            },
+
+            {
+                id: 'g4',
+                color: 'yellow',
+                name: "Nuclear",
+                data: [{
+                    name: "03-03-2022",
+                    y: 1,
+                    drilldown: true
+                }, {
+                    name: "04-03-2022",
+                    y: 2,
+                    drilldown: true
+                }, {
+                    name: "05-03-2022",
+                    y: 3,
+                    drilldown: true
+                }, {
+                    name: "06-03-2022",
+                    y: 4,
+                    drilldown: true
+                }],
+                stack: "move",
+                drilldown: true
+            }
+
+
+            ]
+        });
+
+   </script> 
     <script>
         Highcharts.chart('container2', {
                 chart: {

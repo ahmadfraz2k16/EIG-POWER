@@ -1083,7 +1083,6 @@ if (isset($_POST['selected_date'])) {
 </script>
 
 <!-- JavaScript code to display records in cards -->
-// JavaScript code to display records in cards
 <script>
     // Get references to the dropdowns and card container
     var dateSelect = document.getElementById('dateSelect');
@@ -1127,7 +1126,7 @@ if (isset($_POST['selected_date'])) {
                                     <h4 class="m-b-0">${record[0]}</h4>
                                 </div>
                                 <div class="ml-auto align-self-center">
-                                    <h2 class="font-medium m-b-0">${record[2]} <span class="lead h6">MWh</span></h2>
+                                    <h2 class="font-medium m-b-0">${record[2]} <span class="lead h6">MW</span></h2>
                                     <h5 class="font-medium m-b-0">${record[3]}</h5>
                                 </div>
                             </div>
@@ -1179,7 +1178,6 @@ if (isset($_POST['selected_date'])) {
         displayCards(selectedDate, selectedName);
     });
 </script>
-
 </body>
 
 </html>
