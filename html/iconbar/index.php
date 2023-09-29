@@ -121,7 +121,7 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <!-- <div id="container6" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
         <!-- high chart should be displayed here -->
-        <div id="container_version_2" style="width:100%; height:400px;"></div>
+        <!-- <div id="container_version_2" style="width:100%; height:400px;"></div> -->
         <!-- End Row -->
 
 
@@ -155,6 +155,10 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         </select>
         <div id="cardContainer" class="row justify-content-between">
             <!-- Cards will be dynamically generated here -->
+        </div>
+        <div id="containerLineGraph">
+            <h4>Line Graph Will Be Here</h4>
+            <!-- Line Graph will be dynamically generated here -->
         </div>
         <!-- Row -->
     </div>
@@ -1084,6 +1088,128 @@ if (isset($_POST['selected_date'])) {
 
 <!-- JavaScript code to display records in cards -->
 <script>
+    //line graph function with ajax functionality
+    function updateChart(the_Date, the_Name) {
+        var selectedDate = the_Date;
+        var selectedName = the_Name;
+
+        // Make an AJAX request to fetch updated data
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var combinedData = JSON.parse(xhr.responseText);
+
+                function convertDateFormat(originalDate) {
+                    // Parse the original date string into a Date object
+                    const dateParts = originalDate.split('/');
+                    const day = parseInt(dateParts[1], 10);
+                    const month = parseInt(dateParts[0], 10) - 1; // JavaScript months are 0-based
+                    const year = parseInt(dateParts[2], 10);
+
+                    // Create a Date object
+                    const dateObject = new Date(year, month, day);
+
+                    // Format the date components in "mm/dd/yyyy" format
+                    const formattedDate = `${dateObject.getMonth() + 1}-${dateObject.getDate()}-${dateObject.getFullYear()}`;
+
+                    return formattedDate;
+                }
+                var peakHoursTimes = JSON.parse(combinedData.peak_hours);
+                var final_Xaxis_Times = JSON.parse(combinedData.final_Xaxis);
+                // Get the target date in the 'YYYY-MM-DD' format
+                const targetDateFormatted = convertDateFormat(combinedData.Date);
+                // Get the powerplant name
+                const PowerPlant_Name = combinedData.PowerPlant_Name;
+
+                // Create an array to hold the zones
+                var zones = [];
+
+                // Find the start and end times for the red zone
+                var start = peakHoursTimes[0];
+                var end = peakHoursTimes[peakHoursTimes.length - 1];
+
+                // Find the corresponding indices in the final_Xaxis_Times array
+                var startIndex = final_Xaxis_Times.indexOf(start);
+                var endIndex = final_Xaxis_Times.indexOf(end);
+
+                // Create the zones array with colorIndex for consistent colors
+                zones.push({
+                    fillColor: 'none', // Disable default fill color
+                    lineColor: 'none', // Disable default line color
+                });
+                zones.push({
+                    color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
+                    value: startIndex, // Start from the first peak hour
+                    dashStyle: 'Dash', // Dashed style
+                });
+                zones.push({
+                    fillColor: 'rgba(255, 182, 193, 0.8)',
+                    color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
+                    value: endIndex, // End at the last peak hour
+                    dashStyle: 'Dash', // Dashed style
+                });
+                zones.push({
+                    value: final_Xaxis_Times.indexOf('23:00'), // End at 23:00
+                    fillColor: 'none', // Disable default fill color
+                    lineColor: 'none', // Disable default line color
+
+                });
+
+                // Create a Highcharts chart using the data
+                Highcharts.chart('containerLineGraph', {
+                    chart: {
+                        type: 'areaspline',
+                    },
+                    // time: {
+                    //     timezoneOffset: -5 * 60,
+                    // },
+                    title: {
+                        text: 'Peak Contribution in Demand on ' + targetDateFormatted,
+                        align: 'left',
+                    },
+                    xAxis: {
+                        type: 'category', // Use category type for discrete time values
+                        categories: final_Xaxis_Times, // Use final_Xaxis_Times for x-axis categories
+                        title: {
+                            text: targetDateFormatted,
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Energy Production (Megawatt)',
+                        },
+                    },
+                    tooltip: {
+                        headerFormat: '<b>Time: {point.x:%H:%M}</b><br>',
+                        pointFormat: 'Energy Production: {point.y} MW',
+                    },
+                    plotOptions: {
+                        areaspline: {
+                            fillOpacity: 0.8,
+                            lineWidth: 2,
+                            // lineColor: 'rgba(95, 141, 237, 0.8)',
+                            fillColor: 'none', // Disable default fill color
+                        },
+                    },
+                    series: [{
+                        name: PowerPlant_Name,
+                        type: 'areaspline',
+                        data: combinedData['Combined_Data'],
+                        zoneAxis: 'x', // Set the zoneAxis to 'x'
+                        zones: zones,
+                    }, ],
+                })
+            }
+        };
+
+        // Define the PHP endpoint that handles the request and passes the selectedDate and selectedName
+        var phpEndpoint = 'update_chart.php';
+        var params = 'date=' + encodeURIComponent(selectedDate) + '&name=' + encodeURIComponent(selectedName);
+
+        // Send the request
+        xhr.open('GET', phpEndpoint + '?' + params, true);
+        xhr.send();
+    }
     // Get references to the dropdowns and card container
     var dateSelect = document.getElementById('dateSelect');
     var nameSelect = document.getElementById('nameSelect');
@@ -1148,14 +1274,30 @@ if (isset($_POST['selected_date'])) {
     populateNameDropdown(defaultSelectedDate);
     dateSelect.value = defaultSelectedDate;
 
+    // Set the default selected name
+    var defaultNameOption = nameSelect.querySelector('option[value="' + defaultSelectedName + '"]');
+    if (defaultNameOption) {
+        defaultNameOption.selected = true;
+    }
+
     // Display cards for the default selected date and name
     displayCards(defaultSelectedDate, defaultSelectedName);
+    updateChart(defaultSelectedDate, defaultSelectedName);
+
+    // // Populate the name dropdown with the default selected date and select the first date
+    // var defaultSelectedDate = dateSelect.options[1].value; // Assuming the first date is at index 1
+    // var defaultSelectedName = names[defaultSelectedDate][0]; // Assuming the first name for the first date is at index 0
+    // populateNameDropdown(defaultSelectedDate);
+    // dateSelect.value = defaultSelectedDate;
+
+    // // Display cards for the default selected date and name
+    // displayCards(defaultSelectedDate, defaultSelectedName);
 
     // Event listener for date selection
     dateSelect.addEventListener('change', function() {
         // Get the selected date
         var selectedDate = dateSelect.value;
-
+        console.log(selectedDate);
         // Populate the name dropdown based on the selected date
         populateNameDropdown(selectedDate);
 
@@ -1166,6 +1308,7 @@ if (isset($_POST['selected_date'])) {
 
         // Display cards for the selected date and name
         displayCards(selectedDate, nameSelect.value);
+        updateChart(selectedDate, nameSelect.value);
     });
 
     // Event listener for name selection
@@ -1176,6 +1319,7 @@ if (isset($_POST['selected_date'])) {
 
         // Display cards for the selected date and name
         displayCards(selectedDate, selectedName);
+        updateChart(selectedDate, selectedName);
     });
 </script>
 </body>
