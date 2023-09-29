@@ -283,7 +283,7 @@
     $peakHoursData = [];
 
     // Define the target date and power plant
-    $targetDate = '03/02/2022';
+    $targetDate = '03/15/2022';
     $targetPowerPlant = 'TARBELA';
 
     // Initialize an empty array for the data points
@@ -444,57 +444,50 @@
     foreach ($combinedDataArray['Combined_Data'] as &$dataPoint) {
         unset($dataPoint['x']);
     }
+    // Create an associative array with the combined data
+    $combinedDataArray = [
+        'Combined_Data' => $combinedDataArray['Combined_Data'],
+        'peak_hours' => $peakHoursTimesJson,
+        'final_Xaxis' => $final_Xaxis_TimesJson,
+        'Date' => $targetDate,
+        'PowerPlant_Name' => $targetPowerPlant,
+    ];
     // Convert the combined data into a JSON string for use in JavaScript
     $combinedDataJson = json_encode($combinedDataArray);
     // Print the combined data
     echo '<pre>';
+    // print_r($combinedDataJson);
     // print_r($combinedDataArray);
-    print_r($peakHoursTimes);
-    print_r($final_Xaxis_TimesJson);
+    // print_r($peakHoursTimes);
+    // print_r($final_Xaxis_TimesJson);
     echo '</pre>';
 
     ?>
 
 
     <script>
-        var peakHoursTimes = <?php echo $peakHoursTimesJson; ?>;
-        console.log(peakHoursTimes);
-        var mwNewTimes = <?php echo $mwNewTimesJson; ?>;
-        var final_Xaxis_Times = <?php echo $final_Xaxis_TimesJson; ?>;
-        console.log(final_Xaxis_Times);
-        // Get the target date in the 'YYYY-MM-DD' format
-        const targetDateFormatted = '<?php echo date('Y-m-d', strtotime($targetDate)); ?>';
-        // Include the peakHoursData in your Highcharts chart configuration
-        var peakHoursData = <?php echo $peakHoursDataJson; ?>;
+        function convertDateFormat(originalDate) {
+            // Parse the original date string into a Date object
+            const dateParts = originalDate.split('/');
+            const day = parseInt(dateParts[1], 10);
+            const month = parseInt(dateParts[0], 10) - 1; // JavaScript months are 0-based
+            const year = parseInt(dateParts[2], 10);
+
+            // Create a Date object
+            const dateObject = new Date(year, month, day);
+
+            // Format the date components in "mm/dd/yyyy" format
+            const formattedDate = `${dateObject.getMonth() + 1}-${dateObject.getDate()}-${dateObject.getFullYear()}`;
+
+            return formattedDate;
+        }
         var combinedData = <?php echo $combinedDataJson; ?>;
-
-        // // Create an array to hold the zones
-        // var zones = [];
-
-        // // Set the entire xAxis area to light blue
-        // zones.push({
-        //     color: 'rgba(173, 216, 230, 0.8)', // Light blue color with 80% opacity
-        //     colorIndex: 0, // Use a different color index for the red zone
-        // });
-
-        // // Add a light red zone with dashed style between the first and last peak hour
-        // zones.push({
-        //     color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
-        //     value: final_Xaxis_Times.indexOf(peakHoursTimes[0]), // Start from the first peak hour
-        //     dashStyle: 'Dash', // Dashed style
-        //     colorIndex: 1, // Use a different color index for the red zone
-        // });
-        // zones.push({
-        //     color: 'rgba(255, 182, 193, 0.8)', // Light red color with 50% opacity
-        //     value: final_Xaxis_Times.indexOf(peakHoursTimes[peakHoursTimes.length - 1]), // End at the last peak hour
-        //     dashStyle: 'Dash', // Dashed style
-        //     colorIndex: 1, // Use a different color index for the red zone
-        // });
-        // // Set the entire xAxis area to light blue
-        // zones.push({
-        //     color: 'rgba(173, 216, 230, 0.8)', // Light blue color with 80% opacity
-        //     colorIndex: 0, // Use a different color index for the red zone
-        // });
+        var peakHoursTimes = JSON.parse(combinedData.peak_hours);
+        var final_Xaxis_Times = JSON.parse(combinedData.final_Xaxis);
+        // Get the target date in the 'YYYY-MM-DD' format
+        const targetDateFormatted = convertDateFormat(combinedData.Date);
+        // Get the powerplant name
+        const PowerPlant_Name = combinedData.PowerPlant_Name;
 
         // Create an array to hold the zones
         var zones = [];
@@ -539,13 +532,12 @@
             //     timezoneOffset: -5 * 60,
             // },
             title: {
-                text: 'Energy Production for ' + targetDateFormatted,
+                text: 'Peak Contribution in Demand on ' + targetDateFormatted,
                 align: 'left',
             },
             xAxis: {
                 type: 'category', // Use category type for discrete time values
-                // categories: <?php echo json_encode($mwNewTimes); ?>, // Use mwNewTimes for x-axis categories
-                categories: <?php echo json_encode($final_Xaxis_Times); ?>, // Use final_Xaxis_Times for x-axis categories
+                categories: final_Xaxis_Times, // Use final_Xaxis_Times for x-axis categories
                 title: {
                     text: targetDateFormatted,
                 }
@@ -568,7 +560,7 @@
                 },
             },
             series: [{
-                name: '24_hours_with_Peak_Hours',
+                name: PowerPlant_Name,
                 type: 'areaspline',
                 data: combinedData['Combined_Data'],
                 zoneAxis: 'x', // Set the zoneAxis to 'x'
