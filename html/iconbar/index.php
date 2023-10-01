@@ -162,6 +162,175 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <!-- Row -->
     </div>
 
+    <div class="container-fluid" id="max_min">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Min Max and Average for Time Ranges</h5>
+
+                    <!-- Accordion without outline borders -->
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                    Time Range One 0100----2400
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div id="cardContainer" class="row justify-content-between">
+                                        <div class="col-sm-12 col-md-4">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Max 1</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Min 1</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">340 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Average</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTwo">
+                                <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                    Time Range Two 0100----1600
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div id="cardContainer" class="row justify-content-between">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Max 2</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Min 2</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                                    Time Range Three 1700---2400
+                                </button>
+                            </h2>
+                            <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div id="cardContainer" class="row justify-content-between">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Max 3</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="card" style="border: 1px solid #ccc;">
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row">
+                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">Name:TARBELA</h4>
+                                                        </div>
+                                                        <div class="ml-auto align-self-center">
+                                                            <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
+                                                            <h5 class="font-medium m-b-0">Min 3</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Accordion without outline borders -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 <!-- ============================================================== -->
 <!-- End Page wrapper  -->
