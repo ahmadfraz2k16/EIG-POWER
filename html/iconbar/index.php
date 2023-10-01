@@ -157,7 +157,6 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
             <!-- Cards will be dynamically generated here -->
         </div>
         <div id="containerLineGraph">
-            <h4>Line Graph Will Be Here</h4>
             <!-- Line Graph will be dynamically generated here -->
         </div>
         <!-- Row -->
@@ -714,17 +713,17 @@ if (isset($_POST['selected_date'])) {
                 enabled: true
             }
         },
-        legend: {
-            align: 'left',
-            x: 70,
-            verticalAlign: 'top',
-            y: 70,
-            floating: true,
-            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
-            borderColor: '#CCC',
-            borderWidth: 1,
-            shadow: false
-        },
+        // legend: {
+        //     align: 'left',
+        //     x: 70,
+        //     verticalAlign: 'top',
+        //     y: 70,
+        //     floating: true,
+        //     backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+        //     borderColor: '#CCC',
+        //     borderWidth: 1,
+        //     shadow: false
+        // },
         tooltip: {
             headerFormat: '<b>{point.x}</b><br/>',
             pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}<br/>Sub categories:<br/>{point.subCategories}'
@@ -1092,7 +1091,6 @@ if (isset($_POST['selected_date'])) {
     function updateChart(the_Date, the_Name) {
         var selectedDate = the_Date;
         var selectedName = the_Name;
-
         // Make an AJAX request to fetch updated data
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
