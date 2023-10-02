@@ -1,4 +1,42 @@
 <?php
+// Read the max_min_avg.csv file
+$file_max_min = fopen('C:/xampp/htdocs/latest_Dash/html/iconbar/include/csv/max_min_avg.csv', 'r');
+
+// Initialize arrays to store unique dates and names
+$datesMaxMinAvg = [];
+$namesMaxMinAvg = [];
+$recordsMaxMinAvg = []; // Store all records
+
+// Skip the header row
+fgetcsv($file_max_min);
+
+while (($row = fgetcsv($file_max_min)) !== false) {
+    $dateMaxMinAvg = date('n/j/Y', strtotime($row[0])); // Assuming the date format is "m/d/Y"
+    $nameMaxMinAvg = $row[1];
+
+    // Add the date to the datesMaxMinAvg array if it's not already present
+    if (!in_array($dateMaxMinAvg, $datesMaxMinAvg)) {
+        $datesMaxMinAvg[] = $dateMaxMinAvg;
+    }
+
+    // Add the name to the namesMaxMinAvg array for the corresponding date
+    if (!isset($namesMaxMinAvg[$dateMaxMinAvg])) {
+        $namesMaxMinAvg[$dateMaxMinAvg] = [];
+    }
+
+    // Add the name to the namesMaxMinAvg array if it's not already present
+    if (!in_array($nameMaxMinAvg, $namesMaxMinAvg[$dateMaxMinAvg])) {
+        $namesMaxMinAvg[$dateMaxMinAvg][] = $nameMaxMinAvg;
+    }
+
+    // Store the record
+    $recordsMaxMinAvg[$dateMaxMinAvg][$nameMaxMinAvg][] = $row;
+}
+
+// Close the max_min_avg.csv file
+fclose($file_max_min);
+?>
+<?php
 // Read the CSV file
 $file = fopen('C:/xampp/htdocs/latest_Dash/html/iconbar/include/csv/peakhours.csv', 'r');
 
@@ -162,174 +200,146 @@ $endDate = date_format(date_create(endDate()), "Y-m-d");
         <!-- Row -->
     </div>
 
+
+    <div class="mt-5">
+        <label for="dateSelectMaxMinAvg">Select Date:</label>
+        <select id="dateSelectMaxMinAvg">
+            <option value="">Select a Date</option>
+            <?php foreach ($datesMaxMinAvg as $dateMaxMinAvg) : ?>
+                <option value="<?php echo $dateMaxMinAvg; ?>"><?php echo $dateMaxMinAvg; ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <label for="nameSelectMaxMinAvg">Select Name:</label>
+        <select id="nameSelectMaxMinAvg" disabled>
+            <option value="">Select a Name</option>
+        </select>
+    </div>
     <div class="container-fluid" id="max_min">
-        <div class="col-lg-12">
+        <h3 style="font-size: 1.2em; color: rgb(51, 51, 51); font-weight: bold; fill: rgb(51, 51, 51);">Peaks And Off-Peaks</h3>
 
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Min Max and Average for Time Ranges</h5>
-
-                    <!-- Accordion without outline borders -->
-                    <div class="accordion accordion-flush" id="accordionFlushExample">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="flush-headingOne">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                    Time Range One 0100----2400
-                                </button>
-                            </h2>
-                            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                                <div class="accordion-body">
-                                    <div id="cardContainer" class="row justify-content-between">
-                                        <div class="col-sm-12 col-md-4">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Max 1</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Min 1</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">340 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Average</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+        <div id="cardContainer" class="row justify-content-between">
+            <div class="col-sm-12 col-md-4">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Max 1</h5>
                             </div>
                         </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="flush-headingTwo">
-                                <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                    Time Range Two 0100----1600
-                                </button>
-                            </h2>
-                            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-                                <div class="accordion-body">
-                                    <div id="cardContainer" class="row justify-content-between">
-                                        <div class="col-sm-12 col-md-6">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Max 2</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Min 2</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="flush-headingThree">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                                    Time Range Three 1700---2400
-                                </button>
-                            </h2>
-                            <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-                                <div class="accordion-body">
-                                    <div id="cardContainer" class="row justify-content-between">
-                                        <div class="col-sm-12 col-md-6">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">185 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Max 3</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6">
-                                            <div class="card" style="border: 1px solid #ccc;">
-                                                <div class="card-body">
-                                                    <div class="d-flex flex-row">
-                                                        <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
-                                                        <div class="m-l-10 align-self-center">
-                                                            <h4 class="m-b-0">Name:TARBELA</h4>
-                                                        </div>
-                                                        <div class="ml-auto align-self-center">
-                                                            <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
-                                                            <h5 class="font-medium m-b-0">Min 3</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Accordion without outline borders -->
-
+                    </div>
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Min 1</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">340 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Average</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div id="cardContainer" class="row justify-content-between">
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Min 1</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">340 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Average</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cardContainer" class="row justify-content-between">
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">300 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Min 1</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">Name:TARBELA</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">340 <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">Average</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
 </div>
 <!-- ============================================================== -->
@@ -1488,6 +1498,217 @@ if (isset($_POST['selected_date'])) {
         displayCards(selectedDate, selectedName);
         updateChart(selectedDate, selectedName);
     });
+</script>
+
+<!-- script tag for max_min_avg -->
+<script>
+    // Get references to the dropdowns and table
+    var dateSelectMaxMinAvg = document.getElementById('dateSelectMaxMinAvg');
+    var nameSelectMaxMinAvg = document.getElementById('nameSelectMaxMinAvg');
+    // var recordTableMaxMinAvg = document.getElementById('recordTableMaxMinAvg');
+    var max_min = document.getElementById('max_min');
+
+    // Function to populate the name dropdown based on the selected date
+    function populateNameDropdown(selectedDate) {
+        // Clear previous options
+        nameSelectMaxMinAvg.innerHTML = '<option value="">Select a Name</option>';
+
+        // Populate the name dropdown with names for the selected date
+        <?php foreach ($datesMaxMinAvg as $dateMaxMinAvg) : ?>
+            <?php if (isset($namesMaxMinAvg[$dateMaxMinAvg])) : ?>
+                if (selectedDate === '<?php echo $dateMaxMinAvg; ?>') {
+                    <?php foreach ($namesMaxMinAvg[$dateMaxMinAvg] as $nameMaxMinAvg) : ?>
+                        var option = document.createElement('option');
+                        option.value = '<?php echo $nameMaxMinAvg; ?>';
+                        option.text = '<?php echo $nameMaxMinAvg; ?>';
+                        nameSelectMaxMinAvg.appendChild(option);
+                    <?php endforeach; ?>
+                    nameSelectMaxMinAvg.removeAttribute('disabled');
+                }
+            <?php endif; ?>
+        <?php endforeach; ?>
+    }
+
+    // Function to display cards for a selected date and name
+    function displayCardsWithAccordion(selectedDate, selectedName) {
+        // Clear previous cards
+        max_min.innerHTML = '';
+        // Display the table with records for the selected date and name
+        <?php if (!empty($recordsMaxMinAvg)) : ?>
+            var recordsMaxMinAvg = <?php echo json_encode($recordsMaxMinAvg); ?>;
+            if (selectedDate in recordsMaxMinAvg && selectedName in recordsMaxMinAvg[selectedDate]) {
+                var selectedRecordsMaxMinAvg = recordsMaxMinAvg[selectedDate][selectedName];
+                selectedRecordsMaxMinAvg.forEach(function(record) {
+                    var roundedValue = parseFloat(record[5]).toFixed(2);
+
+                    var cardDiv = document.createElement('div');
+                    // cardDiv.className = 'col-sm-12 col-md-4';
+                    cardDiv.innerHTML = `
+                    <div id="cardContainer" class="row justify-content-between">
+                    <div class="text-center"><h4 class=" text-danger">ALL DAY : ${record[2]}</h4></div>
+            <div class="col-sm-12 col-md-4">
+            
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">MAX</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${record[3]} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">MIN</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${record[4]} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">AVERAGE</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${roundedValue} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cardContainer" class="row justify-content-between">
+        <div class="text-center"><h4 class="text-danger">OFF-PEAK DURATION: ${record[6]}</h4></div>
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">MAX</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${record[7]} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">MIN</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${record[8]} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cardContainer" class="row justify-content-between">
+        <div class="text-center"><h4 class="text-danger">PEAK DURATION: ${record[9]}</h4></div>
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">MAX</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${record[10]} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="card" style="border: 1px solid #ccc;">
+                    <div class="card-body">
+                        <div class="d-flex flex-row">
+                            <div class=""><i class="display-6 text-warning ti-bolt"></i></div>
+                            <div class="m-l-10 align-self-center">
+                                <h4 class="m-b-0">MIN</h4>
+                            </div>
+                            <div class="ml-auto align-self-center">
+                                <h2 class="font-medium m-b-0">${record[11]} <span class="lead h6">MW</span></h2>
+                                <h5 class="font-medium m-b-0">${record[1]}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                `;
+                    max_min.appendChild(cardDiv);
+                });
+
+            }
+        <?php endif; ?>
+    }
+    // Event listener for date selection
+    dateSelectMaxMinAvg.addEventListener('change', function() {
+        // Get the selected date
+        var selectedDateMaxMinAvg = dateSelectMaxMinAvg.value;
+
+        // Populate the name dropdown based on the selected date
+        populateNameDropdown(selectedDateMaxMinAvg);
+
+        // Select the first name for the selected date
+        if (selectedDateMaxMinAvg in namesMaxMinAvg && namesMaxMinAvg[selectedDateMaxMinAvg].length > 0) {
+            nameSelectMaxMinAvg.value = namesMaxMinAvg[selectedDateMaxMinAvg][0];
+        }
+
+        // Display records for the selected date and name
+        displayCardsWithAccordion(selectedDateMaxMinAvg, nameSelectMaxMinAvg.value);
+    });
+
+    // Event listener for name selection
+    nameSelectMaxMinAvg.addEventListener('change', function() {
+        // Get the selected date and name
+        var selectedDateMaxMinAvg = dateSelectMaxMinAvg.value;
+        var selectedNameMaxMinAvg = nameSelectMaxMinAvg.value;
+
+        // Display records for the selected date and name
+        displayCardsWithAccordion(selectedDateMaxMinAvg, selectedNameMaxMinAvg);
+    });
+
+    // Set default values when the page loads
+    var defaultSelectedDateMaxMinAvg = dateSelectMaxMinAvg.options[1].value; // Assuming the first date is at index 1
+    var defaultSelectedNameMaxMinAvg = '<?php echo isset($namesMaxMinAvg[$datesMaxMinAvg[0]]) ? $namesMaxMinAvg[$datesMaxMinAvg[0]][0] : ''; ?>'; // Assuming the first name for the first date is at index 0
+    dateSelectMaxMinAvg.value = defaultSelectedDateMaxMinAvg;
+    populateNameDropdown(defaultSelectedDateMaxMinAvg);
+    nameSelectMaxMinAvg.value = defaultSelectedNameMaxMinAvg;
+    displayCardsWithAccordion(defaultSelectedDateMaxMinAvg, defaultSelectedNameMaxMinAvg);
 </script>
 </body>
 
