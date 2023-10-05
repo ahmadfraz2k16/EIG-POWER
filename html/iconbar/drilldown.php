@@ -273,179 +273,281 @@ function processData($categoriesToFilter, $targetDate)
 
     return $data;
 }
-$TargetDate = '2022-03-02';
-// Define the categories and target date for GENCOS
-$gencosCategories = ['GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG'];
 
-// Process data for GENCOS
-$gencosData = processData($gencosCategories, $TargetDate);
+function generateFinalDrillDown($startDate, $endDate)
+{
+    $final_drill_down = [];
 
-// Define the categories and target date for IPPS
-$ippsCategories = ['IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG'];
-// Process data for IPPS
-$ippsData = processData($ippsCategories, $TargetDate);
+    // Generate a list of dates between the start and end date
+    $dateRange = [];
+    $currentDate = strtotime($startDate);
+    $endDate = strtotime($endDate);
 
-// Define the categories and target date for IPPS
-$ippsGasCategories = ['IPPS FOSSIL FUEL Gas'];
-// Process data for IPPS
-$ippsGasData = processData($ippsGasCategories, $TargetDate);
+    while ($currentDate <= $endDate) {
+        $dateRange[] = date('Y-m-d', $currentDate);
+        $currentDate = strtotime('+1 day', $currentDate);
+    }
 
-// Define the categories and target date for IPPS
-$ippsCoalCategories = ['IPPS FOSSIL FUEL Coal'];
-// Process data for IPPS
-$ippsCoalData = processData($ippsCoalCategories, $TargetDate);
+    foreach ($dateRange as $TargetDate) {
+        // Define the categories for GENCOS
+        $gencosCategories = ['GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG'];
+        // Process data for GENCOS
+        $gencosData = processData($gencosCategories, $TargetDate);
 
-// Define the categories and target date for IPPS
-$ippsFOCategories = ['IPPS FOSSIL FUEL FO'];
-// Process data for IPPS
-$ippsFOData = processData($ippsFOCategories, $TargetDate);
+        // Define the categories for IPPS
+        $ippsCategories = ['IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG'];
+        // Process data for IPPS
+        $ippsData = processData($ippsCategories, $TargetDate);
 
-// Define the categories and target date for IPPS
-$ippsRLNGCategories = ['IPPS FOSSIL FUEL RLNG'];
-// Process data for IPPS
-$ippsRLNGData = processData($ippsRLNGCategories, $TargetDate);
+        // Define the categories for IPPS Gas
+        $ippsGasCategories = ['IPPS FOSSIL FUEL Gas'];
+        // Process data for IPPS Gas
+        $ippsGasData = processData($ippsGasCategories, $TargetDate);
 
-// Define the categories and target date for Nuclear
-$nuclearCategories = ['NUCLEAR'];
-// Process data for IPPS
-$nuclearData = processData($nuclearCategories, $TargetDate);
+        // Define the categories for IPPS Coal
+        $ippsCoalCategories = ['IPPS FOSSIL FUEL Coal'];
+        // Process data for IPPS Coal
+        $ippsCoalData = processData($ippsCoalCategories, $TargetDate);
+
+        // Define the categories for IPPS FO
+        $ippsFOCategories = ['IPPS FOSSIL FUEL FO'];
+        // Process data for IPPS FO
+        $ippsFOData = processData($ippsFOCategories, $TargetDate);
+
+        // Define the categories for IPPS RLNG
+        $ippsRLNGCategories = ['IPPS FOSSIL FUEL RLNG'];
+        // Process data for IPPS RLNG
+        $ippsRLNGData = processData($ippsRLNGCategories, $TargetDate);
+
+        // Define the categories for Nuclear
+        $nuclearCategories = ['NUCLEAR'];
+        // Process data for Nuclear
+        $nuclearData = processData($nuclearCategories, $TargetDate);
+
+        // Define the categories for Public
+        $publicCategories = ['HYDEL'];
+        // Process data for Public
+        $publicData = processData($publicCategories, $TargetDate);
+
+        // Define the categories for Private
+        $privateCategories = ['IPPS HYDEL HYDEL'];
+        // Process data for Private
+        $privateData = processData($privateCategories, $TargetDate);
+
+        // Define the categories for Solar
+        $solarCategories = ['SOLAR'];
+        // Process data for Solar
+        $solarData = processData($solarCategories, $TargetDate);
+
+        // Define the categories for Wind
+        $windCategories = ['WIND'];
+        // Process data for Wind
+        $windData = processData($windCategories, $TargetDate);
+
+        // Define the categories for Bagasse
+        $BagasseCategories = ['IPPS BAGASSE BAGASSE'];
+        // Process data for Bagasse
+        $BagasseData = processData($BagasseCategories, $TargetDate);
+
+        // Combine the data into an associative array for each date
+        $finalData = [
+            "Hydro" => json_decode(json_encode(["Private" => $privateData["Private"], "Public" => $publicData["Public"]]), true),
+            "Renewable" => json_decode(json_encode(["Solar" => $solarData["Solar"], "Wind" => $windData["Wind"], "Bagasse" => $BagasseData["Bagasse"]]), true),
+            "IPPS" => json_decode(json_encode(["Gas" => $ippsGasData["Gas"], "Coal" => $ippsCoalData["Coal"], "FO" => $ippsFOData["FO"], "RLNG" => $ippsRLNGData["RLNG"]]), true),
+            "GENCOS" => json_decode(json_encode($gencosData), true),
+            "Nuclear" => json_decode(json_encode($nuclearData), true)
+        ];
+
+        // Add the final data for the current date to the final_drill_down array
+        $final_drill_down[$TargetDate] = $finalData;
+    }
+
+    // Convert the final associative array to JSON format
+    $final_drill_down_JSON = json_encode($final_drill_down, JSON_PRETTY_PRINT);
+
+    // Return the final JSON data
+    return $final_drill_down_JSON;
+}
+
+// Example usage:
+$startDate = '2022-03-02';
+$endDate = '2022-03-21';
+$final_drill_down_JSON = generateFinalDrillDown($startDate, $endDate);
+// echo $final_drill_down_JSON;
+
+// $TargetDate = '2022-03-02';
+// // Define the categories and target date for GENCOS
+// $gencosCategories = ['GENCOS Gas', 'GENCOS Coal', 'GENCOS RLNG'];
+
+// // Process data for GENCOS
+// $gencosData = processData($gencosCategories, $TargetDate);
+
+// // Define the categories and target date for IPPS
+// $ippsCategories = ['IPPS FOSSIL FUEL Gas', 'IPPS FOSSIL FUEL Coal', 'IPPS FOSSIL FUEL FO', 'IPPS FOSSIL FUEL RLNG'];
+// // Process data for IPPS
+// $ippsData = processData($ippsCategories, $TargetDate);
+
+// // Define the categories and target date for IPPS
+// $ippsGasCategories = ['IPPS FOSSIL FUEL Gas'];
+// // Process data for IPPS
+// $ippsGasData = processData($ippsGasCategories, $TargetDate);
+
+// // Define the categories and target date for IPPS
+// $ippsCoalCategories = ['IPPS FOSSIL FUEL Coal'];
+// // Process data for IPPS
+// $ippsCoalData = processData($ippsCoalCategories, $TargetDate);
+
+// // Define the categories and target date for IPPS
+// $ippsFOCategories = ['IPPS FOSSIL FUEL FO'];
+// // Process data for IPPS
+// $ippsFOData = processData($ippsFOCategories, $TargetDate);
+
+// // Define the categories and target date for IPPS
+// $ippsRLNGCategories = ['IPPS FOSSIL FUEL RLNG'];
+// // Process data for IPPS
+// $ippsRLNGData = processData($ippsRLNGCategories, $TargetDate);
+
+// // Define the categories and target date for Nuclear
+// $nuclearCategories = ['NUCLEAR'];
+// // Process data for IPPS
+// $nuclearData = processData($nuclearCategories, $TargetDate);
 
 
-// Define the categories and target date for Public
-$publicCategories = ['HYDEL'];
-// Process data for IPPS
-$publicData = processData($publicCategories, $TargetDate);
+// // Define the categories and target date for Public
+// $publicCategories = ['HYDEL'];
+// // Process data for IPPS
+// $publicData = processData($publicCategories, $TargetDate);
 
 
-// Define the categories and target date for Private
-$privateCategories = ['IPPS HYDEL HYDEL'];
-// Process data for IPPS
-$privateData = processData($privateCategories, $TargetDate);
+// // Define the categories and target date for Private
+// $privateCategories = ['IPPS HYDEL HYDEL'];
+// // Process data for IPPS
+// $privateData = processData($privateCategories, $TargetDate);
 
 
-// Define the categories and target date for Solar
-$solarCategories = ['SOLAR'];
-// Process data for IPPS
-$solarData = processData($solarCategories, $TargetDate);
+// // Define the categories and target date for Solar
+// $solarCategories = ['SOLAR'];
+// // Process data for IPPS
+// $solarData = processData($solarCategories, $TargetDate);
 
 
-// Define the categories and target date for Wind
-$windCategories = ['WIND'];
-// Process data for IPPS
-$windData = processData($windCategories, $TargetDate);
+// // Define the categories and target date for Wind
+// $windCategories = ['WIND'];
+// // Process data for IPPS
+// $windData = processData($windCategories, $TargetDate);
 
 
-// Define the categories and target date for Bagasse
-$BagasseCategories = ['IPPS BAGASSE BAGASSE'];
-// Process data for IPPS
-$BagasseData = processData($BagasseCategories, $TargetDate);
+// // Define the categories and target date for Bagasse
+// $BagasseCategories = ['IPPS BAGASSE BAGASSE'];
+// // Process data for IPPS
+// $BagasseData = processData($BagasseCategories, $TargetDate);
 
 
-// Capture the data in variables
-$gencos = json_encode($gencosData, JSON_PRETTY_PRINT);
-$ipps = json_encode($ippsData, JSON_PRETTY_PRINT);
-$nuclear = json_encode($nuclearData, JSON_PRETTY_PRINT);
-$private = json_encode($privateData, JSON_PRETTY_PRINT);
-$public = json_encode($publicData, JSON_PRETTY_PRINT);
-$solar = json_encode($solarData, JSON_PRETTY_PRINT);
-$wind = json_encode($windData, JSON_PRETTY_PRINT);
-$bagasse = json_encode($BagasseData, JSON_PRETTY_PRINT);
-$ippsGas = json_encode($ippsGasData, JSON_PRETTY_PRINT);
-$ippsCoal = json_encode($ippsCoalData, JSON_PRETTY_PRINT);
-$ippsFO = json_encode($ippsFOData, JSON_PRETTY_PRINT);
-$ippsRLNG = json_encode($ippsRLNGData, JSON_PRETTY_PRINT);
-echo $ippsGas;
-echo "<br>";
-echo "<br>";
-echo $ippsCoal;
-echo "<br>";
-echo "<br>";
-echo $ippsFO;
-echo "<br>";
-echo "<br>";
-echo $ippsRLNG;
-echo "<br>";
-echo "<br>";
-// Output each variable
-echo $gencos;
-echo "<br>";
-echo "<br>";
-echo $ipps;
+// // Capture the data in variables
+// $gencos = json_encode($gencosData, JSON_PRETTY_PRINT);
+// $ipps = json_encode($ippsData, JSON_PRETTY_PRINT);
+// $nuclear = json_encode($nuclearData, JSON_PRETTY_PRINT);
+// $private = json_encode($privateData, JSON_PRETTY_PRINT);
+// $public = json_encode($publicData, JSON_PRETTY_PRINT);
+// $solar = json_encode($solarData, JSON_PRETTY_PRINT);
+// $wind = json_encode($windData, JSON_PRETTY_PRINT);
+// $bagasse = json_encode($BagasseData, JSON_PRETTY_PRINT);
+// $ippsGas = json_encode($ippsGasData, JSON_PRETTY_PRINT);
+// $ippsCoal = json_encode($ippsCoalData, JSON_PRETTY_PRINT);
+// $ippsFO = json_encode($ippsFOData, JSON_PRETTY_PRINT);
+// $ippsRLNG = json_encode($ippsRLNGData, JSON_PRETTY_PRINT);
+// echo $ippsGas;
 // echo "<br>";
 // echo "<br>";
-// echo $nuclear;
+// echo $ippsCoal;
 // echo "<br>";
 // echo "<br>";
-// echo $private;
+// echo $ippsFO;
 // echo "<br>";
 // echo "<br>";
-// echo $public;
+// echo $ippsRLNG;
 // echo "<br>";
 // echo "<br>";
-// echo $solar;
+// // Output each variable
+// echo $gencos;
 // echo "<br>";
 // echo "<br>";
-// echo $wind;
-// echo "<br>";
-// echo "<br>";
-// echo $bagasse;
-// echo "<br>";
-// echo "<br>";
-// echo trim($bagasse, '{}');
-// Combine the data into an associative array
-$Renewables = [
-    "Solar" => $solarData['Solar'],
-    "Wind" => $windData['Wind'],
-    "Bagasse" => $BagasseData['Bagasse']
-];
+// echo $ipps;
+// // echo "<br>";
+// // echo "<br>";
+// // echo $nuclear;
+// // echo "<br>";
+// // echo "<br>";
+// // echo $private;
+// // echo "<br>";
+// // echo "<br>";
+// // echo $public;
+// // echo "<br>";
+// // echo "<br>";
+// // echo $solar;
+// // echo "<br>";
+// // echo "<br>";
+// // echo $wind;
+// // echo "<br>";
+// // echo "<br>";
+// // echo $bagasse;
+// // echo "<br>";
+// // echo "<br>";
+// // echo trim($bagasse, '{}');
+// // Combine the data into an associative array
+// $Renewables = [
+//     "Solar" => $solarData['Solar'],
+//     "Wind" => $windData['Wind'],
+//     "Bagasse" => $BagasseData['Bagasse']
+// ];
 
-// Convert the array to JSON format if needed
-$RenewablesJSON = json_encode($Renewables, JSON_PRETTY_PRINT);
+// // Convert the array to JSON format if needed
+// $RenewablesJSON = json_encode($Renewables, JSON_PRETTY_PRINT);
 
-// Output the JSON data
-echo 'RenewablesJSON';
-echo '<br>';
-echo $RenewablesJSON;
-// Combine the data into an associative array
-$Hydro = [
-    "Private" => $privateData['Private'],
-    "Public" => $publicData['Public']
-];
+// // Output the JSON data
+// echo 'RenewablesJSON';
+// echo '<br>';
+// echo $RenewablesJSON;
+// // Combine the data into an associative array
+// $Hydro = [
+//     "Private" => $privateData['Private'],
+//     "Public" => $publicData['Public']
+// ];
 
-// Convert the array to JSON format if needed
-$HydroJSON = json_encode($Hydro, JSON_PRETTY_PRINT);
-echo "<br>";
-echo "<br>";
-// Combine the data into an associative array
-$IPPS = [
-    "Gas" => $ippsGasData['Gas'],
-    "Coal" => $ippsCoalData['Coal'],
-    "FO" => $ippsFOData['FO'],
-    "RLNG" => $ippsRLNGData['RLNG']
-];
+// // Convert the array to JSON format if needed
+// $HydroJSON = json_encode($Hydro, JSON_PRETTY_PRINT);
+// echo "<br>";
+// echo "<br>";
+// // Combine the data into an associative array
+// $IPPS = [
+//     "Gas" => $ippsGasData['Gas'],
+//     "Coal" => $ippsCoalData['Coal'],
+//     "FO" => $ippsFOData['FO'],
+//     "RLNG" => $ippsRLNGData['RLNG']
+// ];
 
-// Convert the array to JSON format if needed
-$ippsJSON = json_encode($IPPS, JSON_PRETTY_PRINT);
-echo "<br>";
-echo "<br>";
-// Output the JSON data
-// echo $HydroJSON;
-// Create the final associative array with the specified structure
-$final_drill_down = [
-    $TargetDate => [
-        "Hydro" => json_decode($HydroJSON, true),
-        "Renewable" => json_decode($RenewablesJSON, true),
-        "IPPS" => json_decode($ippsJSON, true),
-        "GENCOS" => json_decode($gencos, true),
-        "Nuclear" => json_decode($nuclear, true)
-    ]
-];
+// // Convert the array to JSON format if needed
+// $ippsJSON = json_encode($IPPS, JSON_PRETTY_PRINT);
+// echo "<br>";
+// echo "<br>";
+// // Output the JSON data
+// // echo $HydroJSON;
+// // Create the final associative array with the specified structure
+// $final_drill_down = [
+//     $TargetDate => [
+//         "Hydro" => json_decode($HydroJSON, true),
+//         "Renewable" => json_decode($RenewablesJSON, true),
+//         "IPPS" => json_decode($ippsJSON, true),
+//         "GENCOS" => json_decode($gencos, true),
+//         "Nuclear" => json_decode($nuclear, true)
+//     ]
+// ];
 
-// Convert the final associative array to JSON format
-$final_drill_down_JSON = json_encode($final_drill_down, JSON_PRETTY_PRINT);
+// // Convert the final associative array to JSON format
+// $final_drill_down_JSON = json_encode($final_drill_down, JSON_PRETTY_PRINT);
 
-// Output the result
-echo $final_drill_down_JSON;
+// // Output the result
+// echo $final_drill_down_JSON;
 ?>
 
 
@@ -641,7 +743,8 @@ echo $final_drill_down_JSON;
                 }
             },
 
-            series: [{
+            series: [
+                {
                     color: 'blue',
                     name: "Hydro",
                     data: [{
