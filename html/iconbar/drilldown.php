@@ -349,13 +349,108 @@ function generateFinalDrillDown($startDate, $endDate)
         // Process data for Bagasse
         $BagasseData = processData($BagasseCategories, $TargetDate);
 
+
+        // summing them up for making parent layer of the chart
+        // // Access the "Private" and "Public" data and calculate sums
+        // $privateData = $data["Private"]["data"];
+        // $publicData = $data["Public"]["data"];
+        // Initialize sum variables for private and public data
+        $privateSum = 0;
+        $publicSum = 0;
+        $hydroSum = 0;
+        $solarSum = 0;
+        $windSum = 0;
+        $bagasseSum = 0;
+        $renewableSum = 0;
+        $nuclearSum = 0;
+        $ippsgasSum = 0;
+        $ippscoalSum = 0;
+        $ippsfoSum = 0;
+        $ippsrlngSum = 0;
+        $ippsSum = 0;
+        $gencosgasSum=0;
+        $gencoscoalSum=0;
+        $gencosrlngSum=0;
+        $gencosSum=0;
+        // Iterate through the "data" arrays and sum the values
+        //Hydro(public + private)
+        foreach ($privateData["Private"]["data"] as $entry) {
+            $privateSum += $entry[1];
+        }
+
+        foreach ($publicData["Public"]["data"] as $entry) {
+            $publicSum += $entry[1];
+        }
+        $hydroSum = $privateSum + $publicSum;
+        //Renewable(solar, wind, bagasse)
+        foreach ($solarData["Solar"]["data"] as $entry) {
+            $solarSum += $entry[1];
+        }
+
+        foreach ($windData["Wind"]["data"] as $entry) {
+            $windSum += $entry[1];
+        }
+
+        foreach ($BagasseData["Bagasse"]["data"] as $entry) {
+            $bagasseSum += $entry[1];
+        }
+        $renewableSum = $solarSum + $windSum + $bagasseSum;
+        //Nuclear sum
+        foreach ($nuclearData["Nuclear"]["data"] as $entry) {
+            $nuclearSum += $entry[1];
+        }
+
+        //thermal 
+        //ipps(Gas, Coal, Fo, RLNG)
+        foreach ($ippsGasData["Gas"]["data"] as $entry) {
+            $ippsgasSum += $entry[1];
+        }
+        foreach ($ippsCoalData["Coal"]["data"] as $entry) {
+            $ippscoalSum += $entry[1];
+        }
+        foreach ($ippsFOData["FO"]["data"] as $entry) {
+            $ippsfoSum += $entry[1];
+        }
+        foreach ($ippsRLNGData["RLNG"]["data"] as $entry) {
+            $ippsrlngSum += $entry[1];
+        }
+         
+        $ippsSum = $ippsrlngSum + $ippsgasSum + $ippscoalSum + $ippsfoSum;
+     
+        //gencos(gas, coal, f0)
+        foreach ($gencosData["Gas"]["data"] as $entry) {
+            $gencosgasSum += $entry[1];
+        }
+        foreach ($gencosData["Coal"]["data"] as $entry) {
+            $gencoscoalSum += $entry[1];
+        }
+        foreach ($gencosData["RLNG"]["data"] as $entry) {
+            $gencosrlngSum += $entry[1];
+        }
+
+        $gencosSum = $gencosrlngSum + $gencoscoalSum + $gencosgasSum;
         // Combine the data into an associative array for each date
         $finalData = [
             "Hydro" => json_decode(json_encode(["Private" => $privateData["Private"], "Public" => $publicData["Public"]]), true),
             "Renewable" => json_decode(json_encode(["Solar" => $solarData["Solar"], "Wind" => $windData["Wind"], "Bagasse" => $BagasseData["Bagasse"]]), true),
             "IPPS" => json_decode(json_encode(["Gas" => $ippsGasData["Gas"], "Coal" => $ippsCoalData["Coal"], "FO" => $ippsFOData["FO"], "RLNG" => $ippsRLNGData["RLNG"]]), true),
             "GENCOS" => json_decode(json_encode($gencosData), true),
-            "Nuclear" => json_decode(json_encode($nuclearData), true)
+            "Nuclear" => json_decode(json_encode($nuclearData), true),
+            "privateSum" => $privateSum,
+            "publicSum" => $publicSum,
+            "bagasseSum" => $bagasseSum,
+            "windSum" => $windSum,
+            "solarSum" => $solarSum,
+            "renewableSum" => $renewableSum,
+            "ippsrlngSum" => $ippsrlngSum,
+            "ippsgasSum" => $ippsgasSum,
+            "ippscoalSum" => $ippscoalSum,
+            "ippsfoSum" => $ippsfoSum,
+            "ippsSum" => $ippsSum,
+            "gencosrlngSum" => $gencosrlngSum,
+            "gencoscoalSum" => $gencoscoalSum,
+            "gencosgasSum" => $gencosgasSum,
+            "gencosSum" => $gencosSum,
         ];
 
         // Add the final data for the current date to the final_drill_down array
@@ -371,9 +466,9 @@ function generateFinalDrillDown($startDate, $endDate)
 
 // Example usage:
 $startDate = '2022-03-02';
-$endDate = '2022-03-21';
+$endDate = '2022-03-03';
 $final_drill_down_JSON = generateFinalDrillDown($startDate, $endDate);
-// echo $final_drill_down_JSON;
+echo $final_drill_down_JSON;
 
 // $TargetDate = '2022-03-02';
 // // Define the categories and target date for GENCOS
