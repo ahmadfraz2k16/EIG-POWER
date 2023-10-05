@@ -403,7 +403,9 @@ $Renewables = [
 $RenewablesJSON = json_encode($Renewables, JSON_PRETTY_PRINT);
 
 // Output the JSON data
-// echo $RenewablesJSON;
+echo 'RenewablesJSON';
+echo '<br>';
+echo $RenewablesJSON;
 // Combine the data into an associative array
 $Hydro = [
     "Private" => $privateData['Private'],
@@ -428,7 +430,22 @@ echo "<br>";
 echo "<br>";
 // Output the JSON data
 // echo $HydroJSON;
+// Create the final associative array with the specified structure
+$final_drill_down = [
+    $TargetDate => [
+        "Hydro" => json_decode($HydroJSON, true),
+        "Renewable" => json_decode($RenewablesJSON, true),
+        "IPPS" => json_decode($ippsJSON, true),
+        "GENCOS" => json_decode($gencos, true),
+        "Nuclear" => json_decode($nuclear, true)
+    ]
+];
 
+// Convert the final associative array to JSON format
+$final_drill_down_JSON = json_encode($final_drill_down, JSON_PRETTY_PRINT);
+
+// Output the result
+echo $final_drill_down_JSON;
 ?>
 
 
@@ -476,6 +493,8 @@ echo "<br>";
 
 
     <script>
+        var javascriptArray = <?php echo $final_drill_down_JSON; ?>;
+
         Highcharts.Tick.prototype.drillable = function() {};
         Highcharts.chart('container', {
             chart: {
@@ -484,12 +503,18 @@ echo "<br>";
                 events: {
                     drilldown: function(e) {
                         if (!e.seriesOptions) {
-
+                            // if (e.point.name == "2022-03-02") {
+                            //     alert(e.point.name);
+                            // }
+                            var specificDate = javascriptArray[e.point.name]
+                            console.log(specificDate);
+                            console.log(specificDate.GENCOS);
+                            console.log(specificDate.IPPS);
+                            console.log(specificDate.Nuclear);
                             var chart = this,
-                                Hydro = <?php echo $HydroJSON;?>,
+                                Hydro = specificDate.Hydro,
 
-                                Renewables = 
-                                    <?php echo $RenewablesJSON; ?>,
+                                Renewables = specificDate.Renewable,
 
                                 Thermal = {
 
@@ -497,27 +522,22 @@ echo "<br>";
                                         name: 'IPPS',
                                         color: 'Brown',
                                         data: [{
-                                                name: "03-03-2022",
-                                                y: 1,
-                                                drilldown: true
-
-                                            },
-                                            {
-                                                name: "04-03-2022",
-                                                y: 2,
-                                                drilldown: true
-                                            },
-                                            {
-                                                name: "05-03-2022",
-                                                y: 3,
-                                                drilldown: true
-                                            },
-                                            {
-                                                name: "06-03-2022",
-                                                y: 4,
-                                                drilldown: true
-                                            }
-                                        ],
+                                            name: "2022-03-01",
+                                            y: 1,
+                                            drilldown: true
+                                        }, {
+                                            name: "2022-03-02",
+                                            y: 2,
+                                            drilldown: true
+                                        }, {
+                                            name: "2022-03-03",
+                                            y: 3,
+                                            drilldown: true
+                                        }, {
+                                            name: "2022-03-04",
+                                            y: 4,
+                                            drilldown: true
+                                        }],
                                         stack: "move"
 
                                     },
@@ -528,19 +548,19 @@ echo "<br>";
                                         name: 'GENCOS',
                                         color: 'DarkGrey',
                                         data: [{
-                                            name: "03-03-2022",
+                                            name: "2022-03-01",
                                             y: 1,
                                             drilldown: true
                                         }, {
-                                            name: "04-03-2022",
+                                            name: "2022-03-02",
                                             y: 2,
                                             drilldown: true
                                         }, {
-                                            name: "05-03-2022",
+                                            name: "2022-03-03",
                                             y: 3,
                                             drilldown: true
                                         }, {
-                                            name: "06-03-2022",
+                                            name: "2022-03-04",
                                             y: 4,
                                             drilldown: true
                                         }],
@@ -551,16 +571,21 @@ echo "<br>";
                                 },
 
 
-                                IPPS = <?php echo $ippsJSON; ?>,
-
-                                
-                                Gencos = <?php echo $gencos; ?>,
+                                IPPS = specificDate.IPPS,
 
 
+                                Gencos = specificDate.GENCOS,
 
-                                Nuclear = <?php echo $nuclear; ?>
 
 
+                                Nuclear = specificDate.Nuclear
+
+                            if (e.point.name == "2022-03-02") {
+                                console.log(e.point.name)
+                                console.log(e); // Log the entire e object to the console
+                            } else {
+                                console.log(e.point.name + '_' + 'ipps')
+                            }
 
 
                             if (e.point.color == "blue") {
@@ -620,19 +645,127 @@ echo "<br>";
                     color: 'blue',
                     name: "Hydro",
                     data: [{
-                        name: "03-03-2022",
+                        name: "2022-03-01",
                         y: 1,
                         drilldown: true
                     }, {
-                        name: "04-03-2022",
+                        name: "2022-03-02",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-03",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-04",
                         y: 2,
                         drilldown: true
                     }, {
-                        name: "05-03-2022",
+                        name: "2022-03-05",
                         y: 3,
                         drilldown: true
                     }, {
-                        name: "06-03-2022",
+                        name: "2022-03-06",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-07",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-08",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-09",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-10",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-11",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-12",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-13",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-14",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-15",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-16",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-17",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-18",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-19",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-20",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-21",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-22",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-23",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-24",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-25",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-26",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-27",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-28",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-29",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-30",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-31",
                         y: 4,
                         drilldown: true
                     }],
@@ -644,19 +777,127 @@ echo "<br>";
                     color: 'green',
                     name: "Renewables",
                     data: [{
-                        name: "03-03-2022",
+                        name: "2022-03-01",
                         y: 1,
                         drilldown: true
                     }, {
-                        name: "04-03-2022",
+                        name: "2022-03-02",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-03",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-04",
                         y: 2,
                         drilldown: true
                     }, {
-                        name: "05-03-2022",
+                        name: "2022-03-05",
                         y: 3,
                         drilldown: true
                     }, {
-                        name: "06-03-2022",
+                        name: "2022-03-06",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-07",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-08",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-09",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-10",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-11",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-12",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-13",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-14",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-15",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-16",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-17",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-18",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-19",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-20",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-21",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-22",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-23",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-24",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-25",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-26",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-27",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-28",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-29",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-30",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-31",
                         y: 4,
                         drilldown: true
                     }],
@@ -668,19 +909,127 @@ echo "<br>";
                     color: 'red',
                     name: "Thermal",
                     data: [{
-                        name: "03-03-2022",
+                        name: "2022-03-01",
                         y: 1,
                         drilldown: true
                     }, {
-                        name: "04-03-2022",
+                        name: "2022-03-02",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-03",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-04",
                         y: 2,
                         drilldown: true
                     }, {
-                        name: "05-03-2022",
+                        name: "2022-03-05",
                         y: 3,
                         drilldown: true
                     }, {
-                        name: "06-03-2022",
+                        name: "2022-03-06",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-07",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-08",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-09",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-10",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-11",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-12",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-13",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-14",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-15",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-16",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-17",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-18",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-19",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-20",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-21",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-22",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-23",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-24",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-25",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-26",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-27",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-28",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-29",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-30",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-31",
                         y: 4,
                         drilldown: true
                     }],
@@ -693,19 +1042,127 @@ echo "<br>";
                     color: 'yellow',
                     name: "Nuclear",
                     data: [{
-                        name: "03-03-2022",
+                        name: "2022-03-01",
                         y: 1,
                         drilldown: true
                     }, {
-                        name: "04-03-2022",
+                        name: "2022-03-02",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-03",
+                        y: 1,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-04",
                         y: 2,
                         drilldown: true
                     }, {
-                        name: "05-03-2022",
+                        name: "2022-03-05",
                         y: 3,
                         drilldown: true
                     }, {
-                        name: "06-03-2022",
+                        name: "2022-03-06",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-07",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-08",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-09",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-10",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-11",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-12",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-13",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-14",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-15",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-16",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-17",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-18",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-19",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-20",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-21",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-22",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-23",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-24",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-25",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-26",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-27",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-28",
+                        y: 4,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-29",
+                        y: 2,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-30",
+                        y: 3,
+                        drilldown: true
+                    }, {
+                        name: "2022-03-31",
                         y: 4,
                         drilldown: true
                     }],
