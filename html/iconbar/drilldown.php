@@ -368,10 +368,11 @@ function generateFinalDrillDown($startDate, $endDate)
         $ippsfoSum = 0;
         $ippsrlngSum = 0;
         $ippsSum = 0;
-        $gencosgasSum=0;
-        $gencoscoalSum=0;
-        $gencosrlngSum=0;
-        $gencosSum=0;
+        $gencosgasSum = 0;
+        $gencoscoalSum = 0;
+        $gencosrlngSum = 0;
+        $gencosSum = 0;
+        $thermalSum = 0;
         // Iterate through the "data" arrays and sum the values
         //Hydro(public + private)
         foreach ($privateData["Private"]["data"] as $entry) {
@@ -414,9 +415,9 @@ function generateFinalDrillDown($startDate, $endDate)
         foreach ($ippsRLNGData["RLNG"]["data"] as $entry) {
             $ippsrlngSum += $entry[1];
         }
-         
+
         $ippsSum = $ippsrlngSum + $ippsgasSum + $ippscoalSum + $ippsfoSum;
-     
+
         //gencos(gas, coal, f0)
         foreach ($gencosData["Gas"]["data"] as $entry) {
             $gencosgasSum += $entry[1];
@@ -429,6 +430,8 @@ function generateFinalDrillDown($startDate, $endDate)
         }
 
         $gencosSum = $gencosrlngSum + $gencoscoalSum + $gencosgasSum;
+        //thermal sum
+        $thermalSum = $gencosSum + $ippsSum;
         // Combine the data into an associative array for each date
         $finalData = [
             "Hydro" => json_decode(json_encode(["Private" => $privateData["Private"], "Public" => $publicData["Public"]]), true),
@@ -438,6 +441,8 @@ function generateFinalDrillDown($startDate, $endDate)
             "Nuclear" => json_decode(json_encode($nuclearData), true),
             "privateSum" => $privateSum,
             "publicSum" => $publicSum,
+            "hydroSum" => $hydroSum,
+            "nuclearSum" => $nuclearSum,
             "bagasseSum" => $bagasseSum,
             "windSum" => $windSum,
             "solarSum" => $solarSum,
@@ -451,12 +456,81 @@ function generateFinalDrillDown($startDate, $endDate)
             "gencoscoalSum" => $gencoscoalSum,
             "gencosgasSum" => $gencosgasSum,
             "gencosSum" => $gencosSum,
+            "thermalSum" => $thermalSum,
+
+
         ];
 
         // Add the final data for the current date to the final_drill_down array
         $final_drill_down[$TargetDate] = $finalData;
+        // Add the data for DataParentLayerHydroHydro for the current date to $dataForParentOne
+        $dataForParentOneHydro[$TargetDate] = [
+            "name" => $TargetDate,
+            "y" => $hydroSum,
+            "drilldown" => true
+        ];
+        // Add the data for DataParentLayerRenewable for the current date to $dataForParentOne
+        $dataForParentOneRenewable[$TargetDate] = [
+            "name" => $TargetDate,
+            "y" => $renewableSum,
+            "drilldown" => true
+        ];
+        // Add the data for DataParentLayerNuclear for the current date to $dataForParentOne
+        $dataForParentOneNuclear[$TargetDate] = [
+            "name" => $TargetDate,
+            "y" => $nuclearSum,
+            "drilldown" => true
+        ];
+        // Add the data for DataParentLayerThermal for the current date to $dataForParentOne
+        $dataForParentOneThermal[$TargetDate] = [
+            "name" => $TargetDate,
+            "y" => $thermalSum,
+            "drilldown" => true
+        ];
+        // Add the data for DataParentLayerIPPS for the current date to $dataForParentOne
+        $dataForParentOneIPPS[$TargetDate] = [
+            "name" => $TargetDate,
+            "y" => $ippsSum,
+            "drilldown" => true
+        ];
+        // Add the data for DataParentLayerGENCOS for the current date to $dataForParentOne
+        $dataForParentOneGENCOS[$TargetDate] = [
+            "name" => $TargetDate,
+            "y" => $gencosSum,
+            "drilldown" => true
+        ];
+        // $final_drill_down["DataForParentOne"] = [
+        //     "DataParentLayerHydro"  => array(
+        //         "name" => $TargetDate,
+        //         "y" => $hydroSum,
+        //         "drilldown" => true
+        //     ),
+        //     // "DataParentLayerRenewable"  => array(
+        //     //     "name" => $TargetDate,
+        //     //     "y" => $renewableSum,
+        //     //     "drilldown" => true
+        //     // ),
+        //     // "DataParentLayerNuclear"  => array(
+        //     //     "name" => $TargetDate,
+        //     //     "y" => $nuclearSum,
+        //     //     "drilldown" => true
+        //     // ),
+        //     // "DataParentLayerThermal"  => array(
+        //     //     "name" => $TargetDate,
+        //     //     "y" => $thermalSum,
+        //     //     "drilldown" => true
+        //     // ),
+        // ];
     }
-
+    // Add the $dataForParentOne array to the final_drill_down array
+    $final_drill_down["DataForParentOne"] = [
+        "DataParentLayerHydro" => $dataForParentOneHydro,
+        "DataParentLayerRenewable" => $dataForParentOneRenewable,
+        "DataParentLayerNuclear" => $dataForParentOneNuclear,
+        "DataParentLayerThermal" => $dataForParentOneThermal,
+        "DataParentLayerIPPS" => $dataForParentOneIPPS,
+        "DataParentLayerGENCOS" => $dataForParentOneGENCOS,
+    ];
     // Convert the final associative array to JSON format
     $final_drill_down_JSON = json_encode($final_drill_down, JSON_PRETTY_PRINT);
 
@@ -465,10 +539,12 @@ function generateFinalDrillDown($startDate, $endDate)
 }
 
 // Example usage:
-$startDate = '2022-03-02';
-$endDate = '2022-03-03';
-$final_drill_down_JSON = generateFinalDrillDown($startDate, $endDate);
-echo $final_drill_down_JSON;
+$startDatee = $startDate;
+$endDatee = $endDate;
+// $startDatee = '2022-03-02';
+// $endDatee = '2022-03-05';
+$final_drill_down_JSON = generateFinalDrillDown($startDatee, $endDatee);
+// echo $final_drill_down_JSON;
 
 // $TargetDate = '2022-03-02';
 // // Define the categories and target date for GENCOS
@@ -691,6 +767,62 @@ echo $final_drill_down_JSON;
 
     <script>
         var javascriptArray = <?php echo $final_drill_down_JSON; ?>;
+        // Access DataParentLayerHydro object
+        var dataParentLayerHydro = javascriptArray.DataForParentOne.DataParentLayerHydro;
+        var dataParentLayerNuclear = javascriptArray.DataForParentOne.DataParentLayerNuclear;
+        var dataParentLayerThermal = javascriptArray.DataForParentOne.DataParentLayerThermal;
+        var dataParentLayerRenewable = javascriptArray.DataForParentOne.DataParentLayerRenewable;
+        var dataParentLayerIPPS = javascriptArray.DataForParentOne.DataParentLayerIPPS;
+        var dataParentLayerGENCOS = javascriptArray.DataForParentOne.DataParentLayerGENCOS;
+        // Initialize an array to store the desired output
+        var desiredOutputHydro = [];
+        var desiredOutputRenewable = [];
+        var desiredOutputNuclear = [];
+        var desiredOutputThermal = [];
+        var desiredOutputIPPS = [];
+        var desiredOutputGENCOS = [];
+        // Loop through the data and push each entry to the desired output array
+        for (var date in dataParentLayerHydro) {
+            if (dataParentLayerHydro.hasOwnProperty(date)) {
+                desiredOutputHydro.push(dataParentLayerHydro[date]);
+            }
+        }
+        // Loop through the data and push each entry to the desired output array
+        for (var date in dataParentLayerRenewable) {
+            if (dataParentLayerRenewable.hasOwnProperty(date)) {
+                desiredOutputRenewable.push(dataParentLayerRenewable[date]);
+            }
+        }
+        // Loop through the data and push each entry to the desired output array
+        for (var date in dataParentLayerNuclear) {
+            if (dataParentLayerNuclear.hasOwnProperty(date)) {
+                desiredOutputNuclear.push(dataParentLayerNuclear[date]);
+            }
+        }
+        // Loop through the data and push each entry to the desired output array
+        for (var date in dataParentLayerThermal) {
+            if (dataParentLayerThermal.hasOwnProperty(date)) {
+                desiredOutputThermal.push(dataParentLayerThermal[date]);
+            }
+        }
+        // Loop through the data and push each entry to the desired output array
+        for (var date in dataParentLayerGENCOS) {
+            if (dataParentLayerGENCOS.hasOwnProperty(date)) {
+                desiredOutputGENCOS.push(dataParentLayerGENCOS[date]);
+            }
+        }
+        // Loop through the data and push each entry to the desired output array
+        for (var date in dataParentLayerIPPS) {
+            if (dataParentLayerIPPS.hasOwnProperty(date)) {
+                desiredOutputIPPS.push(dataParentLayerIPPS[date]);
+            }
+        }
+        // // Now, desiredOutput contains the desired data
+        // console.log(desiredOutputHydro);
+        // console.log(desiredOutputHydro);
+        // console.log(desiredOutputHydro);
+        // console.log(desiredOutputHydro);
+        // console.log(desiredOutputHydro);
 
         Highcharts.Tick.prototype.drillable = function() {};
         Highcharts.chart('container', {
@@ -718,23 +850,25 @@ echo $final_drill_down_JSON;
                                     'IPPS': {
                                         name: 'IPPS',
                                         color: 'Brown',
-                                        data: [{
-                                            name: "2022-03-01",
-                                            y: 1,
-                                            drilldown: true
-                                        }, {
-                                            name: "2022-03-02",
-                                            y: 2,
-                                            drilldown: true
-                                        }, {
-                                            name: "2022-03-03",
-                                            y: 3,
-                                            drilldown: true
-                                        }, {
-                                            name: "2022-03-04",
-                                            y: 4,
-                                            drilldown: true
-                                        }],
+                                        data: desiredOutputIPPS
+                                        // [{
+                                        //     name: "2022-03-01",
+                                        //     y: 1,
+                                        //     drilldown: true
+                                        // }, {
+                                        //     name: "2022-03-02",
+                                        //     y: 2,
+                                        //     drilldown: true
+                                        // }, {
+                                        //     name: "2022-03-03",
+                                        //     y: 3,
+                                        //     drilldown: true
+                                        // }, {
+                                        //     name: "2022-03-04",
+                                        //     y: 4,
+                                        //     drilldown: true
+                                        // }]
+                                        ,
                                         stack: "move"
 
                                     },
@@ -744,23 +878,25 @@ echo $final_drill_down_JSON;
 
                                         name: 'GENCOS',
                                         color: 'DarkGrey',
-                                        data: [{
-                                            name: "2022-03-01",
-                                            y: 1,
-                                            drilldown: true
-                                        }, {
-                                            name: "2022-03-02",
-                                            y: 2,
-                                            drilldown: true
-                                        }, {
-                                            name: "2022-03-03",
-                                            y: 3,
-                                            drilldown: true
-                                        }, {
-                                            name: "2022-03-04",
-                                            y: 4,
-                                            drilldown: true
-                                        }],
+                                        data: desiredOutputGENCOS
+                                        // [{
+                                        //     name: "2022-03-01",
+                                        //     y: 1,
+                                        //     drilldown: true
+                                        // }, {
+                                        //     name: "2022-03-02",
+                                        //     y: 2,
+                                        //     drilldown: true
+                                        // }, {
+                                        //     name: "2022-03-03",
+                                        //     y: 3,
+                                        //     drilldown: true
+                                        // }, {
+                                        //     name: "2022-03-04",
+                                        //     y: 4,
+                                        //     drilldown: true
+                                        // }]
+                                        ,
                                         stack: "move"
 
                                     }
@@ -838,135 +974,138 @@ echo $final_drill_down_JSON;
                 }
             },
 
-            series: [
-                {
+            series: [{
                     color: 'blue',
                     name: "Hydro",
-                    data: [{
-                        name: "2022-03-01",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-02",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-03",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-04",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-05",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-06",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-07",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-08",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-09",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-10",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-11",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-12",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-13",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-14",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-15",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-16",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-17",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-18",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-19",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-20",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-21",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-22",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-23",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-24",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-25",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-26",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-27",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-28",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-29",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-30",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-31",
-                        y: 4,
-                        drilldown: true
-                    }],
+                    data: desiredOutputHydro
+                        //     [
+                        //     {
+                        //         name: "2022-03-01",
+                        //         y: 1,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-02",
+                        //         y: 1,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-03",
+                        //         y: 1,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-04",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-05",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-06",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-07",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-08",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-09",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-10",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-11",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-12",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-13",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-14",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-15",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-16",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-17",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-18",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-19",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-20",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-21",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-22",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-23",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-24",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-25",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-26",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-27",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-28",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-29",
+                        //         y: 2,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-30",
+                        //         y: 3,
+                        //         drilldown: true
+                        //     }, {
+                        //         name: "2022-03-31",
+                        //         y: 4,
+                        //         drilldown: true
+                        //     }
+                        // ]
+                        ,
                     stack: "move",
                     // drilldown: true
                 },
@@ -974,131 +1113,135 @@ echo $final_drill_down_JSON;
                 {
                     color: 'green',
                     name: "Renewables",
-                    data: [{
-                        name: "2022-03-01",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-02",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-03",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-04",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-05",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-06",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-07",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-08",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-09",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-10",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-11",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-12",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-13",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-14",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-15",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-16",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-17",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-18",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-19",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-20",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-21",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-22",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-23",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-24",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-25",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-26",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-27",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-28",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-29",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-30",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-31",
-                        y: 4,
-                        drilldown: true
-                    }],
+                    data: desiredOutputRenewable
+                //     [
+                //     {
+                //         name: "2022-03-01",
+                //         y: 1,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-02",
+                //         y: 1,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-03",
+                //         y: 1,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-04",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-05",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-06",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-07",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-08",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-09",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-10",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-11",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-12",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-13",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-14",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-15",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-16",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-17",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-18",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-19",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-20",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-21",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-22",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-23",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-24",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-25",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-26",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-27",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-28",
+                //         y: 4,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-29",
+                //         y: 2,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-30",
+                //         y: 3,
+                //         drilldown: true
+                //     }, {
+                //         name: "2022-03-31",
+                //         y: 4,
+                //         drilldown: true
+                //     }
+                // ]
+                ,
                     stack: "move",
                     // drilldown: true
                 },
@@ -1106,131 +1249,134 @@ echo $final_drill_down_JSON;
                 {
                     color: 'red',
                     name: "Thermal",
-                    data: [{
-                        name: "2022-03-01",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-02",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-03",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-04",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-05",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-06",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-07",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-08",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-09",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-10",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-11",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-12",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-13",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-14",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-15",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-16",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-17",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-18",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-19",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-20",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-21",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-22",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-23",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-24",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-25",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-26",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-27",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-28",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-29",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-30",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-31",
-                        y: 4,
-                        drilldown: true
-                    }],
+                    data: desiredOutputThermal
+                    // [
+                    // {
+                    //     name: "2022-03-01",
+                    //     y: 1,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-02",
+                    //     y: 1,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-03",
+                    //     y: 1,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-04",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-05",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-06",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-07",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-08",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-09",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-10",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-11",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-12",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-13",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-14",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-15",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-16",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-17",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-18",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-19",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-20",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-21",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-22",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-23",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-24",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-25",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-26",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-27",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-28",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-29",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-30",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-31",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }]
+                    ,
                     stack: "move",
                     drilldown: true
                 },
@@ -1239,131 +1385,134 @@ echo $final_drill_down_JSON;
 
                     color: 'yellow',
                     name: "Nuclear",
-                    data: [{
-                        name: "2022-03-01",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-02",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-03",
-                        y: 1,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-04",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-05",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-06",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-07",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-08",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-09",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-10",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-11",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-12",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-13",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-14",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-15",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-16",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-17",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-18",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-19",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-20",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-21",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-22",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-23",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-24",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-25",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-26",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-27",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-28",
-                        y: 4,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-29",
-                        y: 2,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-30",
-                        y: 3,
-                        drilldown: true
-                    }, {
-                        name: "2022-03-31",
-                        y: 4,
-                        drilldown: true
-                    }],
+                    data: desiredOutputNuclear
+                    // [
+                    // {
+                    //     name: "2022-03-01",
+                    //     y: 1,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-02",
+                    //     y: 1,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-03",
+                    //     y: 1,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-04",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-05",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-06",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-07",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-08",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-09",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-10",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-11",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-12",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-13",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-14",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-15",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-16",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-17",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-18",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-19",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-20",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-21",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-22",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-23",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-24",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-25",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-26",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-27",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-28",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-29",
+                    //     y: 2,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-30",
+                    //     y: 3,
+                    //     drilldown: true
+                    // }, {
+                    //     name: "2022-03-31",
+                    //     y: 4,
+                    //     drilldown: true
+                    // }]
+                    ,
                     stack: "move"
                     // drilldown: true
                 }
